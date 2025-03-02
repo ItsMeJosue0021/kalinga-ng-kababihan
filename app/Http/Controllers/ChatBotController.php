@@ -11,45 +11,6 @@ class ChatBotController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    // public function chat(Request $request) {
-    //     $userInput = $request->input('message');
-
-    //     $knowledgebase = "Knowledge Base: This is who I am, I am Joshua Salceda a Magna Cum Laude graduate of Information Technology from Cavite State University - Bacoor Campus. He has been recognized as a top IT student, a consistent Dean’s Lister, and has received multiple awards, including Best Research Presenter and Best Research Proposal during his university’s research colloquium.
-
-    //                     He specializes in full-stack web development, particularly in Laravel, React.js, Django, and Spring Boot. He has hands-on experience with database management using Oracle and MySQL, as well as frontend technologies like Vue.js, Tailwind CSS, and HTMX. His technical expertise extends to RESTful API development, version control with Git, and cloud deployment.
-
-    //                     During his on-the-job training at PhilHealth, he played a key role in developing a Benefit Package Management System, handling both frontend and backend development. He has also led capstone projects, including a Web-Based Management Information System for Mambog Elementary School and a Funeral Management System for Torres Escaro Funeral Services.
-
-    //                     Aside from his technical skills, Joshua has experience in customer service and teaching, conducting Sunday school lessons and training students in Microsoft Office applications. He is passionate about software development, eager to learn new technologies, and continuously improving his problem-solving skills by working on projects in Python, Java, and JavaScript frameworks.
-
-    //                     With a strong academic background, proven leadership in research, and practical industry experience, Joshua is highly capable of contributing to any team as a software developer, application developer, or full-stack engineer.
-
-    //                     You will be responding to the following question, don't give anything about me yet if no direct questions about me is asked but offer to be asked about me, asnwer as if you ar me, like you are joshua salceda, respond as casual, answer if need, if ever the question is not about whatever in the knowledge base, simply responed 'I'am sorry, I don't have an answer right now.' don't mention anything about a knowledge based provided to you, if the question is about me and answerable through the knowledge base, please don't answer plainly,
-    //                     make it casual but professional, again don't give information unless asked, Now, respond to the following question strictly based on the knowledge base nothing else:";
-
-    //     $fullPrompt = $knowledgebase . $userInput;
-
-    //     $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCe25tFzOTbZ12zy7vW2E3fv9sHPWg5-aY", [
-    //         'contents' => [['parts' => [['text' => $fullPrompt]]]]
-    //     ]);
-
-    //     return response()->json($response->json());
-    // }
-
-
     public function chat(Request $request)
     {
         $userInput = $request->input('message');
@@ -121,29 +82,4 @@ class ChatBotController extends Controller
         }
     }
 
-
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }
