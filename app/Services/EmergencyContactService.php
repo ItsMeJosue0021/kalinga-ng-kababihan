@@ -17,4 +17,24 @@ class EmergencyContactService
     {
         return $this->emergencyContactRepository->getAll();
     }
+
+    public function findEmergencyContactById($id)
+    {
+        return $this->emergencyContactRepository->find($id);
+    }
+
+    public function createEmergencyContact(array $data)
+    {
+        return $this->emergencyContactRepository->create($data);
+    }
+
+    public function updateEmergencyContact($id, array $data)
+    {
+        return $this->emergencyContactRepository->update($id, $data);
+    }
+
+    public function deleteEmergencyContact($id)
+    {
+        return $this->emergencyContactRepository->delete($id);
+    }
 }

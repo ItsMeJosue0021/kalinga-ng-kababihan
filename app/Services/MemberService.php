@@ -17,4 +17,24 @@ class MemberService
     {
         return $this->memberRepository->getAll();
     }
+
+    public function findMemberById($id)
+    {
+        return $this->memberRepository->find($id);
+    }
+
+    public function createMember(array $data)
+    {
+        return $this->memberRepository->create($data);
+    }
+
+    public function updateMember($id, array $data)
+    {
+        return $this->memberRepository->update($id, $data);
+    }
+
+    public function deleteMember($id)
+    {
+        return $this->memberRepository->delete($id);
+    }
 }
