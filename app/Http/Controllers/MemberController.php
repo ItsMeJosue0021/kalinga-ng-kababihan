@@ -32,33 +32,34 @@ class MemberController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'member.first_name' => 'required|string|max:255',
-            'member.middle_name' => 'nullable|string|max:255',
-            'member.last_name' => 'required|string|max:255',
-            'member.nick_name' => 'required|string|max:255',
-            'member.address' => 'required|string|max:1000',
-            'member.dob' => 'required|date',
-            'member.civil_status' => 'required|string|max:50',
-            'member.contact_number' => 'required|string|max:15',
-            'member.fb_messenger_account' => 'nullable|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'nick_name' => 'required|string|max:255',
+            'address' => 'required|string|max:1000',
+            'dob' => 'required|date',
+            'civil_status' => 'required|string|max:50',
+            'contact_number' => 'required|string|max:15',
+            'fb_messenger_account' => 'nullable|string|max:255',
 
-            'contactPerson.contact_person' => 'required|string|max:255',
-            'contactPerson.cp_address' => 'required|string|max:500',
-            'contactPerson.cp_contact_number' => 'required|string|max:15',
-            'contactPerson.cp_fb_messenger_account' => 'nullable|string|max:255',
-            'contactPerson.cp_relationship' => 'required|string|max:50',
+            'contact_person' => 'required|string|max:255',
+            'cp_address' => 'required|string|max:500',
+            'cp_contact_number' => 'required|string|max:15',
+            'cp_fb_messenger_account' => 'nullable|string|max:255',
+            'cp_relationship' => 'required|string|max:50',
         ]);
 
+
         $memberData = [
-            'first_name' => $request->input('member.first_name'),
-            'middle_name' => $request->input('member.middle_name'),
-            'last_name' => $request->input('member.last_name'),
-            'nick_name' => $request->input('member.nick_name'),
-            'address' => $request->input('member.address'),
-            'dob' => $request->input('member.dob'),
-            'civil_status' => $request->input('member.civil_status'),
-            'contact_number' => $request->input('member.contact_number'),
-            'fb_messenger_account' => $request->input('member.fb_messenger_account'),
+            'first_name' => $request->input('first_name'),
+            'middle_name' => $request->input('middle_name'),
+            'last_name' => $request->input('last_name'),
+            'nick_name' => $request->input('nick_name'),
+            'address' => $request->input('address'),
+            'dob' => $request->input('dob'),
+            'civil_status' => $request->input('civil_status'),
+            'contact_number' => $request->input('contact_number'),
+            'fb_messenger_account' => $request->input('fb_messenger_account'),
         ];
 
         $member = $this->memberService->createMember($memberData);
@@ -68,11 +69,11 @@ class MemberController extends Controller
 
         $emergencyContactData = [
             'member_id' => $member->id,
-            'contact_person' => $request->input('contactPerson.contact_person'),
-            'address' => $request->input('contactPerson.cp_address'),
-            'contact_number' => $request->input('contactPerson.cp_contact_number'),
-            'fb_messenger_account' => $request->input('contactPerson.cp_fb_messenger_account'),
-            'relationship' => $request->input('contactPerson.cp_relationship'),
+            'contact_person' => $request->input('contact_person'),
+            'address' => $request->input('cp_address'),
+            'contact_number' => $request->input('cp_contact_number'),
+            'fb_messenger_account' => $request->input('cp_fb_messenger_account'),
+            'relationship' => $request->input('cp_relationship'),
         ];
 
         $emergencyContact = $this->emergencyContactService->createEmergencyContact($emergencyContactData);
@@ -80,7 +81,24 @@ class MemberController extends Controller
             return response()->json(['message' => 'Failed to save contact person'], 500);
         }
 
-        return response()->json($member, 201);
+        return response()->json([
+            'id' => $member->id,
+            'first_name' => $member->first_name,
+            'middle_name' => $member->middle_name,
+            'last_name' => $member->last_name,
+            'nick_name' => $member->nick_name,
+            'address' => $member->address,
+            'dob' => $member->dob,
+            'civil_status' => $member->civil_status,
+            'contact_number' => $member->contact_number,
+            'fb_messenger_account' => $member->fb_messenger_account,
+
+            'contact_person' => $emergencyContact->contact_person,
+            'cp_address' => $emergencyContact->address,
+            'cp_contact_number' => $emergencyContact->contact_number,
+            'cp_fb_messenger_account' => $emergencyContact->fb_messenger_account,
+            'cp_relationship' => $emergencyContact->relationship,
+        ], 201);
     }
 
     public function update(Request $request, $id)

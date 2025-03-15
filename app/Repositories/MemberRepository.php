@@ -9,7 +9,7 @@ class MemberRepository implements MemberRepositoryInterface
 {
     public function getAll()
     {
-        return Member::all();
+        return Member::all()->load('emergencyContact');
     }
 
     public function find($id)
