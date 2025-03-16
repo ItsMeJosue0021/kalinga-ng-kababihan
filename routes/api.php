@@ -18,5 +18,9 @@ Route::get('user', [AuthController::class, 'user'])->middleware('auth:sanctum');
 Route::post('chat', [ChatBotController::class, 'chat']);
 
 
+Route::get('members/search', [MemberController::class, 'search'])->middleware(['auth:sanctum', 'role:admin']);
+
+
 Route::apiResource('members', MemberController::class)->middleware(['auth:sanctum', 'role:admin']);
+
 Route::apiResource('emergency-contacts', EmergencyContactController::class)->middleware(['auth:sanctum', 'role:admin']);

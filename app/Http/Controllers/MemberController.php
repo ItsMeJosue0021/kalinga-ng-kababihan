@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Member;
 use Illuminate\Http\Request;
 use App\Services\MemberService;
 use App\Services\EmergencyContactService;
@@ -81,24 +82,7 @@ class MemberController extends Controller
             return response()->json(['message' => 'Failed to save contact person'], 500);
         }
 
-        return response()->json([
-            'id' => $member->id,
-            'first_name' => $member->first_name,
-            'middle_name' => $member->middle_name,
-            'last_name' => $member->last_name,
-            'nick_name' => $member->nick_name,
-            'address' => $member->address,
-            'dob' => $member->dob,
-            'civil_status' => $member->civil_status,
-            'contact_number' => $member->contact_number,
-            'fb_messenger_account' => $member->fb_messenger_account,
-
-            'contact_person' => $emergencyContact->contact_person,
-            'cp_address' => $emergencyContact->address,
-            'cp_contact_number' => $emergencyContact->contact_number,
-            'cp_fb_messenger_account' => $emergencyContact->fb_messenger_account,
-            'cp_relationship' => $emergencyContact->relationship,
-        ], 201);
+        return response()->json(["message" => "Amember has been created"], 201);
     }
 
     public function update(Request $request, $id)
@@ -113,15 +97,67 @@ class MemberController extends Controller
             'civil_status' => 'required|string|max:50',
             'contact_number' => 'required|string|max:15',
             'fb_messenger_account' => 'nullable|string|max:255',
+
+            'contact_person' => 'required|string|max:255',
+            'cp_address' => 'required|string|max:500',
+            'cp_contact_number' => 'required|string|max:15',
+            'cp_fb_messenger_account' => 'nullable|string|max:255',
+            'cp_relationship' => 'required|string|max:50',
         ]);
 
-        $member = $this->memberService->updateMember($id, $validatedData);
-        return response()->json($member, 200);
+
+        $memberData = [
+            'first_name' => $request->input('first_name'),
+            'middle_name' => $request->input('middle_name'),
+            'last_name' => $request->input('last_name'),
+            'nick_name' => $request->input('nick_name'),
+            'address' => $request->input('address'),
+            'dob' => $request->input('dob'),
+            'civil_status' => $request->input('civil_status'),
+            'contact_number' => $request->input('contact_number'),
+            'fb_messenger_account' => $request->input('fb_messenger_account'),
+        ];
+
+        $member = $this->memberService->updateMember($id, $memberData);
+        if (!$member) {
+            return response()->json(['message' => 'Failed to create member'], 500);
+        }
+
+        $emergencyContactData = [
+            'contact_person' => $request->input('contact_person'),
+            'address' => $request->input('cp_address'),
+            'contact_number' => $request->input('cp_contact_number'),
+            'fb_messenger_account' => $request->input('cp_fb_messenger_account'),
+            'relationship' => $request->input('cp_relationship'),
+        ];
+
+        $emergencyContact = $this->emergencyContactService->updateEmergencyContact($member->emergencyContact->id, $emergencyContactData);
+        if (!$emergencyContact) {
+            return response()->json(['message' => 'Failed to save contact person'], 500);
+        }
+
+        return response()->json(["message" => "Member infor has been updated!"], 200);
+
+
     }
 
     public function destroy($id)
     {
         $this->memberService->deleteMember($id);
         return response()->json(null, 204);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('search');
+
+        $members = Member::where('first_name', 'like', "%{$query}%")
+            ->orWhere('middle_name', 'like', "%{$query}%")
+            ->orWhere('last_name', 'like', "%{$query}%")
+            ->orWhere('nick_name', 'like', "%{$query}%")
+            ->orWhere('fb_messenger_account', 'like', "%{$query}%")
+            ->get();
+
+        return response()->json($members, 200);
     }
 }
