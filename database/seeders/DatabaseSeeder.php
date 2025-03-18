@@ -3,7 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Enquiry;
+use App\Models\Knowledgebase;
 use Illuminate\Database\Seeder;
+use Database\Seeders\EnquirySeeder;
+use Database\Seeders\KnowledgebaseSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,7 +20,9 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             MemberSeeder::class,
-            EmergencyContactSeeder::class
+            EmergencyContactSeeder::class,
+            KnowledgebaseSeeder::class,
+            EnquirySeeder::class,
         ]);
     }
 }

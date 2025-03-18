@@ -71,5 +71,17 @@ class KnowledgebaseController extends Controller
         return response()->json(['message' => 'Knowledgebase deleted successfully']);
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->input('search');
+
+        $knowledgebase = Knowledgebase::where('title', 'like', "%{$query}%")
+            ->orWhere('content', 'like', "%{$query}%")
+            ->get();
+
+        return response()->json($knowledgebase, 200);
+    }
+
+
 
 }
