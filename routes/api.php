@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ChatBotController;
+use App\Http\Controllers\KnowledgebaseController;
 use App\Http\Controllers\EmergencyContactController;
 
 Route::apiResource('roles', RoleController::class)->middleware('auth:sanctum');
@@ -18,8 +19,15 @@ Route::get('user', [AuthController::class, 'user'])->middleware('auth:sanctum');
 Route::post('chat', [ChatBotController::class, 'chat']);
 
 
-Route::get('members/search', [MemberController::class, 'search'])->middleware(['auth:sanctum', 'role:admin']);
+Route::post('/knowledgebase', [KnowledgebaseController::class, 'store'])->middleware(['auth:sanctum', 'role:admin']);
+Route::get('/knowledgebase', [KnowledgebaseController::class, 'getAll'])->middleware(['auth:sanctum', 'role:admin']);
+Route::put('/knowledgebase/{id}', [KnowledgebaseController::class, 'update'])->middleware(['auth:sanctum', 'role:admin']);
+Route::delete('/knowledgebase/{id}', [KnowledgebaseController::class, 'destroy'])->middleware(['auth:sanctum', 'role:admin']);
 
+
+
+
+Route::get('members/search', [MemberController::class, 'search'])->middleware(['auth:sanctum', 'role:admin']);
 
 Route::apiResource('members', MemberController::class)->middleware(['auth:sanctum', 'role:admin']);
 

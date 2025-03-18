@@ -156,7 +156,7 @@ class MemberController extends Controller
             ->orWhere('last_name', 'like', "%{$query}%")
             ->orWhere('nick_name', 'like', "%{$query}%")
             ->orWhere('fb_messenger_account', 'like', "%{$query}%")
-            ->get();
+            ->get()->load('emergencyContact');
 
         return response()->json($members, 200);
     }
