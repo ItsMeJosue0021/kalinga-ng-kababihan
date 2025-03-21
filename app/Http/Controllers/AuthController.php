@@ -71,5 +71,49 @@ class AuthController extends Controller
         return response(['user' => $request->user()->load('role')], 200);
     }
 
+    public function users()
+    {
+        return response(['users' => User::all()], 200);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|min:6',
+        ]);
+
+        // Check if a password is provided
+        if ($request->filled('password')) {
+            // Compare new password with the existing one
+            if (!Hash::check($request->password, $user->password)) {
+                // If they are different, hash and update it
+                $validatedData['password'] = Hash::make($request->password);
+            } else {
+                // If the same, remove password from the update data
+                unset($validatedData['password']);
+            }
+        } else {
+            // If no password is provided, remove it from update data
+            unset($validatedData['password']);
+        }
+
+        // Update user data
+        $user->update($validatedData);
+
+        return response()->json(['message' => 'User updated successfully', 'user' => $user]);
+    }
+
+    // Delete user
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json(['message' => 'User deleted successfully']);
+    }
 
 }

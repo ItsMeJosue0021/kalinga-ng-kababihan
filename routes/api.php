@@ -16,6 +16,9 @@ Route::post('register', [AuthController::class, 'register'])->name('register');
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::get('user', [AuthController::class, 'user'])->middleware('auth:sanctum');
+Route::get('users', [AuthController::class, 'users'])->middleware('auth:sanctum');
+Route::put('/users/{id}', [AuthController::class, 'update'])->middleware('auth:sanctum');
+Route::delete('/users/{id}', [AuthController::class, 'destroy'])->middleware('auth:sanctum');
 
 Route::post('chat', [ChatBotController::class, 'chat']);
 
