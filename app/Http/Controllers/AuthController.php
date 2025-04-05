@@ -13,19 +13,48 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $data = request()->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:6',
+        // Validate the request data
+        $validated = $request->validate([
+            'firstName' => 'required|string|max:255',
+            'lastName' => 'required|string|max:255',
+            'middleName' => 'nullable|string|max:255',
+            'contactNumber' => 'nullable|string|max:20',
+            'username' => 'required|string|max:255|unique:users,username',
+            'block' => 'nullable|string|max:255',
+            'lot' => 'nullable|string|max:255',
+            'street' => 'nullable|string|max:255',
+            'subdivision' => 'nullable|string|max:255',
+            'barangay' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'province' => 'nullable|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8|same:confirmPassword',
+            'confirmPassword' => 'required|string|min:8',
+            'code' => 'nullable|string|max:4', // Optional: if used
         ]);
 
-        $data['password'] = Hash::make($data['password']);
-        $data['role_id'] = 2;
+        // Create the user
+        $user = User::create([
+            'first_name' => $validated['firstName'],
+            'last_name' => $validated['lastName'],
+            'middle_name' => $validated['middleName'],
+            'contact_number' => $validated['contactNumber'],
+            'username' => $validated['username'],
+            'block' => $validated['block'],
+            'lot' => $validated['lot'],
+            'steet' => $validated['street'],
+            'dubdivision' => $validated['subdivision'],
+            'baranggy' => $validated['barangay'],
+            'city' => $validated['city'],
+            'province' => $validated['province'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'role_id' => 2,
+        ]);
 
-        $user = User::create($data);
-
-        return response([
-            "message" => "User created successfully"
+        return response()->json([
+            'message' => 'User created successfully.',
+            'user' => $user
         ], 201);
     }
 
@@ -48,7 +77,7 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response([
-            'user' => $user->load('role')->load('profile'),
+            'user' => $user->load('role'),
             'access_token' => $token
         ]);
     }
@@ -68,7 +97,29 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        return response(['user' => $request->user()->load('role')], 200);
+
+        $data = $request->user()->load('role');
+        $user = [
+            'id' => $data->id,
+            'fullName' => $data->first_name . ' ' . $data->middle_name . ' ' . $data->last_name,
+            'contactNumber' => $data->contact_number,
+            'address' => [
+                'block' => $data->block,
+                'lot' => $data->lot,
+                'street' => $data->steet,
+                'subdivision' => $data->dubdivision,
+                'barangay' => $data->baranggy,
+                'city' => $data->city,
+                'province' => $data->province,
+                'code' => $data->code,
+            ],
+            'username' => $data->username,
+            'email' => $data->email,
+            'role' => $data->role->name,
+        ];
+
+
+        return response(['user' => $user], 200);
     }
 
     public function users()

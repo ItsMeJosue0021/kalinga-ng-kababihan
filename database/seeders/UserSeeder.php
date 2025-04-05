@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class UserSeeder extends Seeder
 {
@@ -16,25 +15,35 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'name' => 'John Doe',
-                'email' => 'john@doe.com',
-                'password' => Hash::make('password'),
-                'role_id' => 1,
-            ],
-            [
-                'name' => 'Jane Doe',
-                'email' => 'jane@doe.com',
-                'password' => Hash::make('password'),
-                'role_id' => 2,
-            ],
-            [
-                'name' => 'Admin User',
+                'first_name' => 'Admin',
+                'last_name' => 'User',
+                'middle_name' => null,
+                'contact_number' => '09123456789',
+                'username' => 'adminuser',
+                'block' => '1',
+                'lot' => '1',
+                'steet' => 'Main Street',
+                'dubdivision' => 'Central Subdivision',
+                'baranggy' => 'Barangay Uno',
+                'city' => 'Cityville',
+                'province' => 'Province A',
                 'email' => 'admin@email.com',
                 'password' => Hash::make('password'),
                 'role_id' => 1,
             ],
             [
-                'name' => 'User User',
+                'first_name' => 'User',
+                'last_name' => 'User',
+                'middle_name' => null,
+                'contact_number' => '09998887777',
+                'username' => 'regularuser',
+                'block' => '2',
+                'lot' => '4',
+                'steet' => 'Second Street',
+                'dubdivision' => 'West Subdivision',
+                'baranggy' => 'Barangay Dos',
+                'city' => 'Townsville',
+                'province' => 'Province B',
                 'email' => 'user@email.com',
                 'password' => Hash::make('password'),
                 'role_id' => 2,
