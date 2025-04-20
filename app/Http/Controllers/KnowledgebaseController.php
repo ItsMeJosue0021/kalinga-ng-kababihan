@@ -31,7 +31,7 @@ class KnowledgebaseController extends Controller
     public function getAll()
     {
         // Fetch all knowledge base entries
-        $knowledgebase = Knowledgebase::all();
+        $knowledgebase = Knowledgebase::latest()->paginate(10);
 
         // Return the data as JSON response
         return response()->json($knowledgebase);
