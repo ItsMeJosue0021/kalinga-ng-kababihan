@@ -7,6 +7,7 @@ use App\Models\Enquiry;
 use App\Models\Knowledgebase;
 use Illuminate\Database\Seeder;
 use Database\Seeders\EnquirySeeder;
+use Database\Seeders\ProjectSeeder;
 use Database\Seeders\KnowledgebaseSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
             EmergencyContactSeeder::class,
             KnowledgebaseSeeder::class,
             EnquirySeeder::class,
+            ProjectSeeder::class,
         ]);
     }
 }

@@ -52,6 +52,7 @@ class MemberController extends Controller
 
 
         $memberData = [
+            'member_id' => $this->generateMemberId(),
             'first_name' => $request->input('first_name'),
             'middle_name' => $request->input('middle_name'),
             'last_name' => $request->input('last_name'),
@@ -152,6 +153,7 @@ class MemberController extends Controller
         $query = $request->input('search');
 
         $members = Member::where('first_name', 'like', "%{$query}%")
+            ->orWhere('member_id', 'like', "%{$query}%")
             ->orWhere('middle_name', 'like', "%{$query}%")
             ->orWhere('last_name', 'like', "%{$query}%")
             ->orWhere('nick_name', 'like', "%{$query}%")
@@ -159,5 +161,22 @@ class MemberController extends Controller
             ->get()->load('emergencyContact');
 
         return response()->json($members, 200);
+    }
+
+    public function generateMemberId()
+    {
+        $latestMember = Member::orderBy('id', 'desc')->first();
+
+        if (!$latestMember || !$latestMember->member_id) {
+            return 'MEM-0001';
+        }
+
+        // Extract numeric part, e.g. "0001" from "MEM-0001"
+        $lastNumber = (int) str_replace('MEM-', '', $latestMember->member_id);
+
+        // Increment and pad with zeroes
+        $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+
+        return 'MEM-' . $newNumber;
     }
 }

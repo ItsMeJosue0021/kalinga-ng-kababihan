@@ -7,6 +7,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\EnquiryController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\KnowledgebaseController;
 use App\Http\Controllers\EmergencyContactController;
 
@@ -43,3 +44,6 @@ Route::post('/enquiries', [EnquiryController::class, 'store']); // Create
 Route::put('/enquiries/{id}', [EnquiryController::class, 'update'])->middleware(['auth:sanctum', 'role:admin']);  // Update
 Route::delete('/enquiries/{id}', [EnquiryController::class, 'destroy'])->middleware(['auth:sanctum', 'role:admin']);  // Delete
 Route::get('/enquiries/search', [EnquiryController::class, 'search'])->middleware(['auth:sanctum', 'role:admin']);
+
+
+Route::apiResource('projects', ProjectController::class);
