@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Enquiry;
 use App\Models\Knowledgebase;
 use Illuminate\Database\Seeder;
+use Database\Seeders\EventsSeeder;
 use Database\Seeders\EnquirySeeder;
 use Database\Seeders\ProjectSeeder;
 use Database\Seeders\KnowledgebaseSeeder;
@@ -25,6 +26,7 @@ class DatabaseSeeder extends Seeder
             KnowledgebaseSeeder::class,
             EnquirySeeder::class,
             ProjectSeeder::class,
+            EventsSeeder::class,
         ]);
     }
 }
