@@ -1,15 +1,17 @@
 <?php
 
-use App\Http\Controllers\AdvocacyController;
-use App\Http\Controllers\EventController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\EmailController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\AdvocacyController;
 use App\Http\Controllers\KnowledgebaseController;
 use App\Http\Controllers\EmergencyContactController;
 
@@ -32,9 +34,6 @@ Route::put('/knowledgebase/{id}', [KnowledgebaseController::class, 'update'])->m
 Route::delete('/knowledgebase/{id}', [KnowledgebaseController::class, 'destroy'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/knowledgebase/search', [KnowledgebaseController::class, 'search']);
 
-
-
-
 Route::get('members/search', [MemberController::class, 'search'])->middleware(['auth:sanctum', 'role:admin']);
 
 Route::apiResource('members', MemberController::class)->middleware(['auth:sanctum', 'role:admin']);
@@ -51,3 +50,17 @@ Route::get('/enquiries/search', [EnquiryController::class, 'search'])->middlewar
 Route::apiResource('projects', ProjectController::class);
 Route::apiResource('events', EventController::class);
 Route::apiResource('advocacies', AdvocacyController::class);
+
+Route::post('/send-email', [EmailController::class, 'send']);
+Route::get('/template', [EmailController::class, 'template']);
+
+Route::get('/test-email', function () {
+    Mail::raw('This is a test email from Kalinga', function ($message) {
+        $message->to('joshuasalceda0021@gmail.com')
+                ->subject('Test Email from Kalinga');
+    });
+
+    return 'Email sent!';
+});
+
+
