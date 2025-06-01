@@ -27,7 +27,18 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
-        $project = $request->all();
+        // return response()->json($request, 200);
+
+        $project = $request->validate([
+            'title' => 'required|string|max:255',
+            'date' => 'required|date',
+            'location' => 'required|string|max:255',
+            'description' => 'required|string',
+            'tags' => 'nullable|array',
+            'tags.*' => 'string',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
 
         try {
             $saved = Project::create([
@@ -35,18 +46,25 @@ class ProjectController extends Controller
                 'date' => $project['date'],
                 'location' => $project['location'],
                 'description' => $project['description'],
-                'tags' => implode(',', $project['tags']),
-                'image' => $project['image'],
+                'tags' => isset($project['tags']) ? implode(',', $project['tags']) : null,
             ]);
 
-            foreach ($project['tags'] as $tagText) {
-                Tag::create([
-                    'text' => $tagText,
-                    'project_id' => $saved->id,
-                ]);
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('projects', 'public');
+                $saved->image = $imagePath;
+                $saved->save();
             }
 
-            return response()->json(['message' => 'Projects and tags saved successfully.'], 201);
+            if (!empty($project['tags'])) {
+                foreach ($project['tags'] as $tagText) {
+                    Tag::create([
+                        'text' => $tagText,
+                        'project_id' => $saved->id,
+                    ]);
+                }
+            }
+
+            return response()->json(['message' => 'Projects saved successfully.'], 201);
 
         } catch (\Exception $e) {
             return response()->json([

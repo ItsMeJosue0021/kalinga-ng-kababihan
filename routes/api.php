@@ -27,7 +27,6 @@ Route::delete('/users/{id}', [AuthController::class, 'destroy'])->middleware('au
 
 Route::post('chat', [ChatBotController::class, 'chat']);
 
-
 Route::post('/knowledgebase', [KnowledgebaseController::class, 'store'])->middleware(['auth:sanctum', 'role:admin']);
 Route::get('/knowledgebase', [KnowledgebaseController::class, 'getAll'])->middleware(['auth:sanctum', 'role:admin']);
 Route::put('/knowledgebase/{id}', [KnowledgebaseController::class, 'update'])->middleware(['auth:sanctum', 'role:admin']);
@@ -35,7 +34,6 @@ Route::delete('/knowledgebase/{id}', [KnowledgebaseController::class, 'destroy']
 Route::get('/knowledgebase/search', [KnowledgebaseController::class, 'search']);
 
 Route::get('members/search', [MemberController::class, 'search'])->middleware(['auth:sanctum', 'role:admin']);
-
 Route::apiResource('members', MemberController::class)->middleware(['auth:sanctum', 'role:admin']);
 
 Route::apiResource('emergency-contacts', EmergencyContactController::class)->middleware(['auth:sanctum', 'role:admin']);
