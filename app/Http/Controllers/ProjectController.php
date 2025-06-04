@@ -27,7 +27,6 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
-        // return response()->json($request, 200);
 
         $project = $request->validate([
             'title' => 'required|string|max:255',

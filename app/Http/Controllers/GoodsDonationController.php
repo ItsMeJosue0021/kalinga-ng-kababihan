@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Mail;
 
 class GoodsDonationController extends Controller
 {
+    public function index()
+    {
+        $donations = GoodsDonation::all();
+        return response()->json($donations);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -52,5 +58,18 @@ class GoodsDonationController extends Controller
             'message' => 'Donation successfully recorded.',
             'data' => $donation
         ], 201);
+    }
+
+    public function show($id)
+    {
+        $donation = GoodsDonation::findOrFail($id);
+        return response()->json($donation);
+    }
+
+    public function destroy($id)
+    {
+        $donation = GoodsDonation::findOrFail($id);
+        $donation->delete();
+        return response()->json(['message' => 'Donation deleted successfully.']);
     }
 }

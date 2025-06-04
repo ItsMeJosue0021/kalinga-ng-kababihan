@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Mail;
 
 class DonationController extends Controller
 {
+    public function index()
+    {
+        $donations = Donation::all();
+        return response()->json($donations);
+    }
+
     public function store(Request $request)
     {
         $type = $request->input('type');
@@ -37,6 +43,7 @@ class DonationController extends Controller
         $donation = Donation::create($validated);
 
         $adminEmail = 'margeiremulta@gmail.com';
+        // $adminEmail = 'joshuasalceda0021@gmail.com';
 
         // Format values
         $name = $donation->name ?? 'Someone';
@@ -71,5 +78,18 @@ class DonationController extends Controller
         }
 
         return response()->json(['message' => 'Donation saved successfully.'], 201);
+    }
+
+    public function show($id)
+    {
+        $donation = Donation::findOrFail($id);
+        return response()->json($donation);
+    }
+
+    public function destroy($id)
+    {
+        $donation = Donation::findOrFail($id);
+        $donation->delete();
+        return response()->json(['message' => 'Donation deleted successfully.']);
     }
 }
