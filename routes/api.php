@@ -12,6 +12,8 @@ use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AdvocacyController;
+use App\Http\Controllers\DonationController;
+use App\Http\Controllers\GoodsDonationController;
 use App\Http\Controllers\KnowledgebaseController;
 use App\Http\Controllers\EmergencyContactController;
 
@@ -48,6 +50,8 @@ Route::get('/enquiries/search', [EnquiryController::class, 'search'])->middlewar
 Route::apiResource('projects', ProjectController::class);
 Route::apiResource('events', EventController::class);
 Route::apiResource('advocacies', AdvocacyController::class);
+Route::apiResource('donations', DonationController::class);
+Route::apiResource('goods-donations', GoodsDonationController::class);
 
 Route::post('/send-email', [EmailController::class, 'send']);
 Route::get('/template', [EmailController::class, 'template']);
@@ -55,7 +59,7 @@ Route::get('/template', [EmailController::class, 'template']);
 Route::get('/test-email', function () {
     Mail::raw('This is a test email from Kalinga', function ($message) {
         $message->to('joshuasalceda0021@gmail.com')
-                ->subject('Test Email from Kalinga');
+            ->subject('Test Email from Kalinga');
     });
 
     return 'Email sent!';
