@@ -60,6 +60,26 @@ class GoodsDonationController extends Controller
         ], 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        $donation = GoodsDonation::findOrFail($id);
+
+        $validated = $request->validate([
+            'type' => 'required|array',
+            'description' => 'required|string',
+            'name' => 'nullable|string',
+            'email' => 'nullable|email',
+        ]);
+
+        $donation->update($validated);
+
+        return response()->json([
+            'message' => 'Donation updated successfully.',
+            'data' => $donation
+        ]);
+
+    }
+
     public function show($id)
     {
         $donation = GoodsDonation::findOrFail($id);

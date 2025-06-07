@@ -52,6 +52,8 @@ Route::apiResource('events', EventController::class);
 Route::apiResource('advocacies', AdvocacyController::class);
 Route::apiResource('donations', DonationController::class);
 Route::apiResource('goods-donations', GoodsDonationController::class);
+Route::post('/goods-donations/update/{id}', [GoodsDonationController::class, 'update']);
+
 
 Route::post('/send-email', [EmailController::class, 'send']);
 Route::get('/template', [EmailController::class, 'template']);

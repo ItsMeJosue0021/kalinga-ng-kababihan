@@ -83,6 +83,8 @@ class DonationController extends Controller
 
     public function update(Request $request, $id)
     {
+        \Log::info('Request data:', $request->all());
+
         $donation = Donation::findOrFail($id);
         if (!$donation) {
             return response()->json(['error' => 'Donation not found.'], 404);
@@ -96,6 +98,7 @@ class DonationController extends Controller
             'email' => 'nullable|email',
             'amount' => 'required|numeric',
         ];
+
 
         if ($type === 'gcash') {
             $rules['reference'] = 'required|string';
