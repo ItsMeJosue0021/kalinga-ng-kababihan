@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Donation;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -42,8 +43,8 @@ class DonationController extends Controller
 
         $donation = Donation::create($validated);
 
-        $adminEmail = 'margeiremulta@gmail.com';
-        // $adminEmail = 'joshuasalceda0021@gmail.com';
+        // $adminEmail = 'margeiremulta@gmail.com';
+        $adminEmail = 'joshuasalceda0021@gmail.com';
 
         // Format values
         $name = $donation->name ?? 'Someone';
@@ -80,6 +81,41 @@ class DonationController extends Controller
         return response()->json(['message' => 'Donation saved successfully.'], 201);
     }
 
+    public function update(Request $request, $id)
+    {
+        $donation = Donation::findOrFail($id);
+        if (!$donation) {
+            return response()->json(['error' => 'Donation not found.'], 404);
+        }
+
+        $type = $request->input('type');
+
+        $rules = [
+            'type' => 'required|string',
+            'name' => 'nullable|string',
+            'email' => 'nullable|email',
+            'amount' => 'required|numeric',
+        ];
+
+        if ($type === 'gcash') {
+            $rules['reference'] = 'required|string';
+            $rules['proof'] = 'nullable|image|max:2048';
+        }
+
+        $validated = $request->validate($rules);
+
+        if ($request->hasFile('proof')) {
+            $validated['proof'] = $request->file('proof')->store('donations', 'public');
+        }
+
+        try {
+            $donation->update($validated);
+            return response()->json(['message' => 'Donation updated successfully.'], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e], 500);
+        }
+    }
+
     public function show($id)
     {
         $donation = Donation::findOrFail($id);
@@ -90,6 +126,42 @@ class DonationController extends Controller
     {
         $donation = Donation::findOrFail($id);
         $donation->delete();
-        return response()->json(['message' => 'Donation deleted successfully.']);
+        return response()->json(['message' => 'Donation deleted successfully.'], 200);
     }
+
+    public function totalDonations()
+    {
+        $total = Donation::sum('amount');
+        return response()->json(['total' => $total]);
+    }
+
+    public function totalDonationsByMonth()
+    {
+        $donations = Donation::selectRaw('MONTH(created_at) as month, SUM(amount) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        return response()->json($donations);
+    }
+
+    public function totalDonationsByYear()
+    {
+        $donations = Donation::selectRaw('YEAR(created_at) as year, SUM(amount) as total')
+            ->groupBy('year')
+            ->orderBy('year')
+            ->get();
+
+        return response()->json($donations);
+    }
+
+    public function totalDonationsByType()
+    {
+        $donations = Donation::selectRaw('type, SUM(amount) as total')
+            ->groupBy('type')
+            ->get();
+
+        return response()->json($donations);
+    }
+
 }
