@@ -43,8 +43,8 @@ class DonationController extends Controller
 
         $donation = Donation::create($validated);
 
-        // $adminEmail = 'margeiremulta@gmail.com';
-        $adminEmail = 'joshuasalceda0021@gmail.com';
+        $adminEmail = 'margeiremulta@gmail.com';
+        // $adminEmail = 'joshuasalceda0021@gmail.com';
 
         // Format values
         $name = $donation->name ?? 'Someone';
