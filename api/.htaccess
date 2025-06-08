@@ -4,6 +4,10 @@
     </IfModule>
 
     RewriteEngine On
+    # Allow access to the storage folder
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^storage/(.*)$ storage/$1 [L]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
