@@ -48,9 +48,14 @@ Route::get('/enquiries/search', [EnquiryController::class, 'search'])->middlewar
 
 
 Route::apiResource('projects', ProjectController::class);
+Route::post('/projects/update/{id}', [ProjectController::class, 'update']);
+
 Route::apiResource('events', EventController::class);
 Route::apiResource('advocacies', AdvocacyController::class);
 Route::apiResource('donations', DonationController::class);
+Route::get('/donations', [DonationController::class, 'totalDonationsByType']);
+
+
 Route::apiResource('goods-donations', GoodsDonationController::class);
 Route::post('/goods-donations/update/{id}', [GoodsDonationController::class, 'update']);
 

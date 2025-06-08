@@ -74,8 +74,13 @@ class ProjectController extends Controller
     }
 
 
-    public function update(Request $request, Project $project)
+    public function update(Request $request, $id)
     {
+        $project = Project::findOrFail($id);
+        if (!$project) {
+            return response()->json(['message' => 'Project not found'], 404);
+        }
+
         $data = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'date' => 'sometimes|required|date',
@@ -100,6 +105,19 @@ class ProjectController extends Controller
         }
 
         return response()->json($project->load('tags'));
+    }
+
+    public function show($id)
+    {
+        $project = Project::with('tags')->findOrFail($id);
+        return response()->json($project);
+    }
+
+    public function destroy($id)
+    {
+        $project = Project::findOrFail($id);
+        $project->delete();
+        return response()->json(['message' => 'Project deleted successfully.'], 200);
     }
 
 }
