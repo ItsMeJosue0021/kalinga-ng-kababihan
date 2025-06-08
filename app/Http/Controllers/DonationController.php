@@ -12,7 +12,7 @@ class DonationController extends Controller
     public function index()
     {
         $donations = Donation::all();
-        return response()->json($donations);
+        return response()->json($donations, );
     }
 
     public function store(Request $request)
@@ -83,8 +83,6 @@ class DonationController extends Controller
 
     public function update(Request $request, $id)
     {
-        \Log::info('Request data:', $request->all());
-
         $donation = Donation::findOrFail($id);
         if (!$donation) {
             return response()->json(['error' => 'Donation not found.'], 404);
@@ -119,52 +117,52 @@ class DonationController extends Controller
         }
     }
 
-    public function show($id)
-    {
-        $donation = Donation::findOrFail($id);
-        return response()->json($donation);
-    }
+    // public function show($id)
+    // {
+    //     $donation = Donation::findOrFail($id);
+    //     return response()->json($donation);
+    // }
 
-    public function destroy($id)
-    {
-        $donation = Donation::findOrFail($id);
-        $donation->delete();
-        return response()->json(['message' => 'Donation deleted successfully.'], 200);
-    }
+    // public function destroy($id)
+    // {
+    //     $donation = Donation::findOrFail($id);
+    //     $donation->delete();
+    //     return response()->json(['message' => 'Donation deleted successfully.'], 200);
+    // }
 
-    public function totalDonations()
-    {
-        $total = Donation::sum('amount');
-        return response()->json(['total' => $total]);
-    }
+    // public function totalDonations()
+    // {
+    //     $total = Donation::sum('amount');
+    //     return response()->json(['total' => $total]);
+    // }
 
-    public function totalDonationsByMonth()
-    {
-        $donations = Donation::selectRaw('MONTH(created_at) as month, SUM(amount) as total')
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
+    // public function totalDonationsByMonth()
+    // {
+    //     $donations = Donation::selectRaw('MONTH(created_at) as month, SUM(amount) as total')
+    //         ->groupBy('month')
+    //         ->orderBy('month')
+    //         ->get();
 
-        return response()->json($donations);
-    }
+    //     return response()->json($donations);
+    // }
 
-    public function totalDonationsByYear()
-    {
-        $donations = Donation::selectRaw('YEAR(created_at) as year, SUM(amount) as total')
-            ->groupBy('year')
-            ->orderBy('year')
-            ->get();
+    // public function totalDonationsByYear()
+    // {
+    //     $donations = Donation::selectRaw('YEAR(created_at) as year, SUM(amount) as total')
+    //         ->groupBy('year')
+    //         ->orderBy('year')
+    //         ->get();
 
-        return response()->json($donations);
-    }
+    //     return response()->json($donations);
+    // }
 
-    public function totalDonationsByType()
-    {
-        $donations = Donation::selectRaw('type, SUM(amount) as total')
-            ->groupBy('type')
-            ->get();
+    // public function totalDonationsByType()
+    // {
+    //     $donations = Donation::selectRaw('type, SUM(amount) as total')
+    //         ->groupBy('type')
+    //         ->get();
 
-        return response()->json($donations);
-    }
+    //     return response()->json($donations);
+    // }
 
 }
