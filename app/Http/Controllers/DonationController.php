@@ -9,11 +9,41 @@ use Illuminate\Support\Facades\Mail;
 
 class DonationController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $donations = Donation::all();
+    //     return response()->json($donations, );
+    // }
+
+    public function index(Request $request)
     {
-        $donations = Donation::all();
-        return response()->json($donations, );
+        $query = Donation::query();
+
+        if ($request->has('type')) {
+            $query->where('type', $request->input('type'));
+        }
+
+        if ($request->has('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
+        }
+
+        if ($request->has('month')) {
+            // Filter by month name directly (e.g., "January")
+            $query->where('month', $request->input('month'));
+        }
+
+        if ($request->has('year')) {
+            // Filter by year directly
+            $query->where('year', $request->input('year'));
+        }
+
+        $donations = $query->latest()->get();
+
+        return response()->json($donations);
     }
+
+
+
 
     public function store(Request $request)
     {
@@ -38,8 +68,8 @@ class DonationController extends Controller
             $validated['proof'] = $request->file('proof')->store('donations', 'public');
         }
 
-        $rules['year'] = now()->year;
-        $rules['month'] = now()->month;
+        $validated['year'] = now()->year;
+        $validated['month'] = now()->month;
 
         $donation = Donation::create($validated);
 
@@ -105,6 +135,9 @@ class DonationController extends Controller
 
         $validated = $request->validate($rules);
 
+        $validated['year'] = now()->year;
+        $validated['month'] = now()->format('F');
+
         if ($request->hasFile('proof')) {
             $validated['proof'] = $request->file('proof')->store('donations', 'public');
         }
@@ -117,52 +150,5 @@ class DonationController extends Controller
         }
     }
 
-    // public function show($id)
-    // {
-    //     $donation = Donation::findOrFail($id);
-    //     return response()->json($donation);
-    // }
-
-    // public function destroy($id)
-    // {
-    //     $donation = Donation::findOrFail($id);
-    //     $donation->delete();
-    //     return response()->json(['message' => 'Donation deleted successfully.'], 200);
-    // }
-
-    // public function totalDonations()
-    // {
-    //     $total = Donation::sum('amount');
-    //     return response()->json(['total' => $total]);
-    // }
-
-    // public function totalDonationsByMonth()
-    // {
-    //     $donations = Donation::selectRaw('MONTH(created_at) as month, SUM(amount) as total')
-    //         ->groupBy('month')
-    //         ->orderBy('month')
-    //         ->get();
-
-    //     return response()->json($donations);
-    // }
-
-    // public function totalDonationsByYear()
-    // {
-    //     $donations = Donation::selectRaw('YEAR(created_at) as year, SUM(amount) as total')
-    //         ->groupBy('year')
-    //         ->orderBy('year')
-    //         ->get();
-
-    //     return response()->json($donations);
-    // }
-
-    // public function totalDonationsByType()
-    // {
-    //     $donations = Donation::selectRaw('type, SUM(amount) as total')
-    //         ->groupBy('type')
-    //         ->get();
-
-    //     return response()->json($donations);
-    // }
 
 }
