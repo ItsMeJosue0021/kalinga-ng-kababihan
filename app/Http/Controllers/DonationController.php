@@ -214,7 +214,7 @@ class DonationController extends Controller
             'type',
             DB::raw('COUNT(*) as count')
         )
-            ->groupBy('year', 'month')
+            ->groupBy('year', 'month', 'type')
             ->orderBy('year')
             ->orderBy('month')
             ->get();
