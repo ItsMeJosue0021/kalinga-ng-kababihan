@@ -25,15 +25,15 @@ class EventController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'location' => 'nullable|string|max:255',
+            'description' => 'required|string',
+            'location' => 'required|string|max:255',
             'date' => 'required|date',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         try {
             if ($request->hasFile('image')) {
-                $validated['image'] = $request->file('image')->store('projects', 'public');
+                $validated['image'] = $request->file('image')->store('events', 'public');
             }
 
             $event = Event::create($validated);
@@ -65,7 +65,7 @@ class EventController extends Controller
 
         try {
             if ($request->hasFile('image')) {
-                $validated['image'] = $request->file('image')->store('projects', 'public');
+                $validated['image'] = $request->file('image')->store('events', 'public');
             }
 
             $event->update($validated);

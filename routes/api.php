@@ -51,6 +51,8 @@ Route::apiResource('projects', ProjectController::class);
 Route::post('/projects/update/{id}', [ProjectController::class, 'update']);
 
 Route::apiResource('events', EventController::class);
+Route::post('/events/update/{id}', [EventController::class, 'update']);
+
 Route::apiResource('advocacies', AdvocacyController::class);
 Route::apiResource('donations', DonationController::class);
 Route::get('/dashboard/donations/summary', [DonationController::class, 'getDonationSummary']);
