@@ -221,12 +221,10 @@ class DonationController extends Controller
 
         $rawData = GoodsDonation::select('year', 'month', 'type')->get();
 
-        // Group and count manually after normalizing type
         $monthlyTrend = $rawData->groupBy(function ($item) {
-            // Normalize type string by sorting the values
-            $types = explode(',', $item->type);
-            sort($types);
-            $normalizedType = implode(',', $types);
+            $typesArray = json_decode($item->type); // decode JSON string to array
+            sort($typesArray);                      // sort alphabetically
+            $normalizedType = json_encode($typesArray); // convert back to string
 
             return $item->year . '-' . $item->month . '-' . $normalizedType;
         })->map(function ($group) {
@@ -235,10 +233,11 @@ class DonationController extends Controller
             return [
                 'year' => $first->year,
                 'month' => $first->month,
-                'type' => implode(',', array_unique(explode(',', $first->type))),
+                'type' => json_decode($first->type), // array form for display
                 'count' => $group->count(),
             ];
         })->values();
+
 
 
         // GOODS DONATIONS
