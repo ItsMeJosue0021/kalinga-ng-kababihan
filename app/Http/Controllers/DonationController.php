@@ -219,24 +219,30 @@ class DonationController extends Controller
         //     ->orderBy('month')
         //     ->get();
 
-        $rawData = GoodsDonation::select('year', 'month', 'type')->get();
+        $monthlyTrend = GoodsDonation::select('year', 'month', 'type')->get();
 
-        $monthlyTrend = $rawData->groupBy(function ($item) {
-            $typesArray = json_decode($item->type); // decode JSON string to array
-            sort($typesArray);                      // sort alphabetically
-            $normalizedType = json_encode($typesArray); // convert back to string
+        $monthlyTrend = $monthlyTrend->groupBy(function ($item) {
+            // If type is already an array, no need to decode
+            $typesArray = is_array($item->type) ? $item->type : json_decode($item->type, true);
+
+            sort($typesArray); // Normalize the order of the array
+            $normalizedType = json_encode($typesArray); // Convert back to string for grouping
 
             return $item->year . '-' . $item->month . '-' . $normalizedType;
         })->map(function ($group) {
             $first = $group->first();
+            $typesArray = is_array($first->type) ? $first->type : json_decode($first->type, true);
 
             return [
                 'year' => $first->year,
                 'month' => $first->month,
-                'type' => json_decode($first->type), // array form for display
+                'type' => $typesArray, // Return as array
                 'count' => $group->count(),
             ];
-        })->values();
+        })->sortBy([
+            ['year', 'asc'],
+            ['month', 'asc'],
+        ])->values();
 
 
 
