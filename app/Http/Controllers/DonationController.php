@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Donation;
 use Exception;
+use App\Models\Donation;
 use Illuminate\Http\Request;
+use App\Models\GoodsDonation;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 
 class DonationController extends Controller
@@ -69,12 +72,12 @@ class DonationController extends Controller
         }
 
         $validated['year'] = now()->year;
-        $validated['month'] = now()->month;
+        $validated['month'] = now()->format('F');
 
         $donation = Donation::create($validated);
 
-        $adminEmail = 'margeiremulta@gmail.com';
-        // $adminEmail = 'joshuasalceda0021@gmail.com';
+        // $adminEmail = 'margeiremulta@gmail.com';
+        $adminEmail = 'joshuasalceda0021@gmail.com';
 
         // Format values
         $name = $donation->name ?? 'Someone';
@@ -148,6 +151,99 @@ class DonationController extends Controller
         } catch (Exception $e) {
             return response()->json(['error' => $e], 500);
         }
+    }
+
+    public function getDonationSummary()
+    {
+        $totalGcash = Donation::where('type', 'gcash')->sum('amount');
+        $totalCash = Donation::where('type', 'cash')->sum('amount');
+        $totalCount = Donation::count();
+
+        $monthly = DB::table('donations')
+        ->select(
+            'year',
+            'month',
+            DB::raw('SUM(amount) as totalAmount'),
+            DB::raw('COUNT(*) as numberOfDonations')
+        )
+        ->groupBy('year', 'month')
+        ->orderBy('year')
+        ->orderBy('month')
+        ->get()
+        ->map(function ($item) {
+            return [
+                'year' => $item->year,
+                'month' => $item->month,
+                'totalAmount' => number_format($item->totalAmount, 2),
+                'numberOfDonations' => $item->numberOfDonations,
+            ];
+        });
+
+        $yearly = DB::table('donations')
+        ->select(
+            'year',
+            DB::raw("SUM(CASE WHEN type = 'cash' THEN amount ELSE 0 END) as cash"),
+            DB::raw("SUM(CASE WHEN type = 'gcash' THEN amount ELSE 0 END) as gcash"),
+            DB::raw("SUM(amount) as total")
+        )
+        ->groupBy('year')
+        ->orderBy('year')
+        ->get()
+        ->map(function ($item) {
+            return [
+                'year' => $item->year,
+                'cash' => number_format($item->cash, 2),
+                'gcash' => number_format($item->gcash, 2),
+                'total' => number_format($item->total, 2),
+            ];
+        });
+
+        $monthlyTrend = GoodsDonation::select(
+            'year',
+            'month',
+            'type',
+            DB::raw('COUNT(*) as count')
+        )
+        ->groupBy('year', 'month', 'type')
+        ->orderBy('year')
+        ->orderBy('month')
+        ->get();
+
+
+    // GOODS DONATIONS
+       $goodsYearly = DB::table('goods_donations')
+        ->select(
+            'year',
+            DB::raw("SUM(CASE WHEN type = 'clothes' THEN 1 ELSE 0 END) as clothes"),
+            DB::raw("SUM(CASE WHEN type = 'food' THEN 1 ELSE 0 END) as food"),
+            DB::raw("SUM(CASE WHEN type = 'groceries' THEN 1 ELSE 0 END) as groceries"),
+            DB::raw("COUNT(*) as total")
+        )
+        ->groupBy('year')
+        ->orderBy('year')
+        ->get()
+        ->map(function ($item) {
+            return [
+                'year' => $item->year,
+                'clothes' => (int) $item->clothes,
+                'food' => (int) $item->food,
+                'groceries' => (int) $item->groceries,
+                'total' => (int) $item->total,
+            ];
+        });
+
+        $goodsTotalCount = GoodsDonation::count();
+
+        return response()->json([
+            'totalGcash' => number_format($totalGcash, 2, '.', ','),
+            'totalCash' => number_format($totalCash, 2, '.', ','),
+            'totalCount' => (string) $totalCount,
+            'monthlyTrend' => $monthly,
+            'yearlyComparison' => $yearly,
+            'goodsMonthlyTrend' => $monthlyTrend,
+            'goodsYearlySummary' => $goodsYearly,
+            'goodsDonTotal' => $goodsTotalCount
+        ]);
     }
 
 
