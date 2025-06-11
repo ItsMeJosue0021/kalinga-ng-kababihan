@@ -208,16 +208,37 @@ class DonationController extends Controller
                 ];
             });
 
-        $monthlyTrend = GoodsDonation::select(
-            'year',
-            'month',
-            'type',
-            DB::raw('COUNT(*) as count')
-        )
-            ->groupBy('year', 'month', 'type')
-            ->orderBy('year')
-            ->orderBy('month')
-            ->get();
+        // $monthlyTrend = GoodsDonation::select(
+        //     'year',
+        //     'month',
+        //     'type',
+        //     DB::raw('COUNT(*) as count')
+        // )
+        //     ->groupBy('year', 'month', 'type')
+        //     ->orderBy('year')
+        //     ->orderBy('month')
+        //     ->get();
+
+        $rawData = GoodsDonation::select('year', 'month', 'type')->get();
+
+        // Group and count manually after normalizing type
+        $monthlyTrend = $rawData->groupBy(function ($item) {
+            // Normalize type string by sorting the values
+            $types = explode(',', $item->type);
+            sort($types);
+            $normalizedType = implode(',', $types);
+
+            return $item->year . '-' . $item->month . '-' . $normalizedType;
+        })->map(function ($group) {
+            $first = $group->first();
+
+            return [
+                'year' => $first->year,
+                'month' => $first->month,
+                'type' => implode(',', array_unique(explode(',', $first->type))),
+                'count' => $group->count(),
+            ];
+        })->values();
 
 
         // GOODS DONATIONS
