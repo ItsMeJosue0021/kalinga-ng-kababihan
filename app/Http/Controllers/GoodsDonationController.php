@@ -9,9 +9,41 @@ use Illuminate\Support\Facades\Mail;
 
 class GoodsDonationController extends Controller
 {
-    public function index()
+    // public function index()
+    // {
+    //     $donations = GoodsDonation::all();
+    //     return response()->json($donations);
+    // }
+
+    public function index(Request $request)
     {
-        $donations = GoodsDonation::all();
+        $query = GoodsDonation::query();
+
+        // if ($request->has('name')) {
+        //     $query->where('name', 'like', '%' . $request->input('name') . '%');
+        // }
+
+        if ($request->has('name')) {
+            $search = $request->input('name');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('type', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhere('address', 'like', '%' . $search . '%');
+            });
+        }
+
+        if ($request->has('month')) {
+            $query->where('month', $request->input('month'));
+        }
+
+        if ($request->has('year')) {
+            $query->where('year', $request->input('year'));
+        }
+
+        $donations = $query->latest()->get();
+
         return response()->json($donations);
     }
 

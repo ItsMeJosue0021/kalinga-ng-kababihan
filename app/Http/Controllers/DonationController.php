@@ -26,8 +26,18 @@ class DonationController extends Controller
             $query->where('type', $request->input('type'));
         }
 
+        // if ($request->has('name')) {
+        //     $query->where('name', 'like', '%' . $request->input('name') . '%');
+        // }
+
         if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->input('name') . '%');
+            $search = $request->input('name');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%')
+                    ->orWhere('reference', 'like', '%' . $search . '%')
+                    ->orWhere('amount', 'like', '%' . $search . '%');
+            });
         }
 
         if ($request->has('month')) {
@@ -160,43 +170,43 @@ class DonationController extends Controller
         $totalCount = Donation::count();
 
         $monthly = DB::table('donations')
-        ->select(
-            'year',
-            'month',
-            DB::raw('SUM(amount) as totalAmount'),
-            DB::raw('COUNT(*) as numberOfDonations')
-        )
-        ->groupBy('year', 'month')
-        ->orderBy('year')
-        ->orderBy('month')
-        ->get()
-        ->map(function ($item) {
-            return [
-                'year' => $item->year,
-                'month' => $item->month,
-                'totalAmount' => number_format($item->totalAmount, 2),
-                'numberOfDonations' => $item->numberOfDonations,
-            ];
-        });
+            ->select(
+                'year',
+                'month',
+                DB::raw('SUM(amount) as totalAmount'),
+                DB::raw('COUNT(*) as numberOfDonations')
+            )
+            ->groupBy('year', 'month')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'year' => $item->year,
+                    'month' => $item->month,
+                    'totalAmount' => number_format($item->totalAmount, 2),
+                    'numberOfDonations' => $item->numberOfDonations,
+                ];
+            });
 
         $yearly = DB::table('donations')
-        ->select(
-            'year',
-            DB::raw("SUM(CASE WHEN type = 'cash' THEN amount ELSE 0 END) as cash"),
-            DB::raw("SUM(CASE WHEN type = 'gcash' THEN amount ELSE 0 END) as gcash"),
-            DB::raw("SUM(amount) as total")
-        )
-        ->groupBy('year')
-        ->orderBy('year')
-        ->get()
-        ->map(function ($item) {
-            return [
-                'year' => $item->year,
-                'cash' => number_format($item->cash, 2),
-                'gcash' => number_format($item->gcash, 2),
-                'total' => number_format($item->total, 2),
-            ];
-        });
+            ->select(
+                'year',
+                DB::raw("SUM(CASE WHEN type = 'cash' THEN amount ELSE 0 END) as cash"),
+                DB::raw("SUM(CASE WHEN type = 'gcash' THEN amount ELSE 0 END) as gcash"),
+                DB::raw("SUM(amount) as total")
+            )
+            ->groupBy('year')
+            ->orderBy('year')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'year' => $item->year,
+                    'cash' => number_format($item->cash, 2),
+                    'gcash' => number_format($item->gcash, 2),
+                    'total' => number_format($item->total, 2),
+                ];
+            });
 
         $monthlyTrend = GoodsDonation::select(
             'year',
@@ -204,33 +214,33 @@ class DonationController extends Controller
             'type',
             DB::raw('COUNT(*) as count')
         )
-        ->groupBy('year', 'month', 'type')
-        ->orderBy('year')
-        ->orderBy('month')
-        ->get();
+            ->groupBy('year', 'month', 'type')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
 
 
-    // GOODS DONATIONS
-       $goodsYearly = DB::table('goods_donations')
-        ->select(
-            'year',
-            DB::raw("SUM(CASE WHEN type = 'clothes' THEN 1 ELSE 0 END) as clothes"),
-            DB::raw("SUM(CASE WHEN type = 'food' THEN 1 ELSE 0 END) as food"),
-            DB::raw("SUM(CASE WHEN type = 'groceries' THEN 1 ELSE 0 END) as groceries"),
-            DB::raw("COUNT(*) as total")
-        )
-        ->groupBy('year')
-        ->orderBy('year')
-        ->get()
-        ->map(function ($item) {
-            return [
-                'year' => $item->year,
-                'clothes' => (int) $item->clothes,
-                'food' => (int) $item->food,
-                'groceries' => (int) $item->groceries,
-                'total' => (int) $item->total,
-            ];
-        });
+        // GOODS DONATIONS
+        $goodsYearly = DB::table('goods_donations')
+            ->select(
+                'year',
+                DB::raw("SUM(CASE WHEN type = 'clothes' THEN 1 ELSE 0 END) as clothes"),
+                DB::raw("SUM(CASE WHEN type = 'food' THEN 1 ELSE 0 END) as food"),
+                DB::raw("SUM(CASE WHEN type = 'groceries' THEN 1 ELSE 0 END) as groceries"),
+                DB::raw("COUNT(*) as total")
+            )
+            ->groupBy('year')
+            ->orderBy('year')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'year' => $item->year,
+                    'clothes' => (int) $item->clothes,
+                    'food' => (int) $item->food,
+                    'groceries' => (int) $item->groceries,
+                    'total' => (int) $item->total,
+                ];
+            });
 
         $goodsTotalCount = GoodsDonation::count();
 
