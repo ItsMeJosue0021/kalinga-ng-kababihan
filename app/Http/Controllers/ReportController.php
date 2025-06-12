@@ -23,7 +23,11 @@ class ReportController extends Controller
 
         $donations = $query->get();
 
-        return response()->json($donations);
+        return response()->json([
+            'donations' => $donations,
+            'totalAmount' => number_format($donations->sum('amount'), 2, '.', ','),
+            'totalCount' => $donations->count(),
+        ]);
     }
 
     public function GoodsDonations (Request $request) {
@@ -38,6 +42,9 @@ class ReportController extends Controller
 
         $donations = $query->latest()->get();
 
-        return response()->json($donations);
+        return response()->json([
+            'donations' => $donations,
+            'totalCount' => $donations->count(),
+        ]);
     }
 }
