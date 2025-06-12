@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +57,11 @@ Route::post('/events/update/{id}', [EventController::class, 'update']);
 Route::apiResource('advocacies', AdvocacyController::class);
 Route::apiResource('donations', DonationController::class);
 Route::get('/dashboard/donations/summary', [DonationController::class, 'getDonationSummary']);
+
+
+// REPORTS
+Route::get('/reports/cash-donations', [ReportController::class, 'CashDonations']);
+Route::get('/reports/goods-donations', [ReportController::class, 'GoodsDonations']);
 
 
 
