@@ -19,6 +19,7 @@ class ProjectController extends Controller
                 'description' => $project->description,
                 'tags' => $project->tags ? explode(',', $project->tags) : [],
                 'image' => $project->image,
+                'is_event' => $project->is_event,
             ];
         });
 
@@ -36,6 +37,7 @@ class ProjectController extends Controller
             'tags' => 'nullable|array',
             'tags.*' => 'string',
             'image' => 'nullable|image|max:2048',
+            'is_event' => 'sometimes|boolean',
         ]);
 
 
@@ -46,6 +48,7 @@ class ProjectController extends Controller
                 'location' => $project['location'],
                 'description' => $project['description'],
                 'tags' => isset($project['tags']) ? implode(',', $project['tags']) : null,
+                'is_event' => $project['is_event'] ?? false,
             ]);
 
             if ($request->hasFile('image')) {
@@ -89,6 +92,7 @@ class ProjectController extends Controller
             'tags' => 'array',
             'tags.*' => 'string',
             'image' => 'nullable|image|max:2048',
+            'is_event' => 'sometimes|boolean',
         ]);
 
         if ($request->hasFile('image')) {

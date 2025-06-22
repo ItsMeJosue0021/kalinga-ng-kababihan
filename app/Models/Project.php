@@ -12,6 +12,7 @@ class Project extends Model
         'location',
         'description',
         'image',
+        'is_event',
     ];
 
     public function tags()
