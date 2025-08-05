@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -27,6 +28,9 @@ Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum')
 Route::get('users', [AuthController::class, 'users'])->middleware('auth:sanctum');
 Route::put('/users/{id}', [AuthController::class, 'update'])->middleware('auth:sanctum');
 Route::delete('/users/{id}', [AuthController::class, 'destroy'])->middleware('auth:sanctum');
+
+Route::post('/users/change-password/{id}', [ProfileController::class, 'changePassword'])->middleware('auth:sanctum');
+Route::post('/users/profile-update/{id}', [ProfileController::class, 'update'])->middleware('auth:sanctum');
 
 Route::post('chat', [ChatBotController::class, 'chat']);
 

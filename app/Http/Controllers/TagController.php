@@ -8,3 +8,4 @@ class TagController extends Controller
 {
     //
 }
+

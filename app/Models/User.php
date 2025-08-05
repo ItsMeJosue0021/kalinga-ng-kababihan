@@ -34,6 +34,7 @@ class User extends Authenticatable
         'city',
         'province',
         'email',
+        'image',
         'password',
         'role_id',
     ];

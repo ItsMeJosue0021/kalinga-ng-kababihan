@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -71,8 +72,11 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
+            Log::info("User login failed: " . ($user->email ?? 'unknown'));
             return response(['message' => 'Invalid credentials',], 401);
         }
+
+        Log::info("User login successful: " . ($user->email ?? 'unknown'));
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

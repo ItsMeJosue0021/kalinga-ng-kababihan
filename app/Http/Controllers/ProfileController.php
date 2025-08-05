@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+use App\Models\User;
 use App\Models\Profile;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\UpdateProfileInfoRequest;
 
 class ProfileController extends Controller
 {
@@ -53,6 +59,41 @@ class ProfileController extends Controller
         }
      }
 
+    public function update(UpdateProfileInfoRequest $request, $id): JsonResponse {
+        $user = User::findOrFail($id);
+        try {
+            $user->update([
+                'username' => $request->username,
+                'email' => $request->email,
+                'contact_number' => $request->contactNo,
+                'block' => $request->block,
+                'lot' => $request->lot,
+                'steet' => $request->street,
+                'dubdivision' => $request->subdivision,
+                'baranggy' => $request->barangay,
+                'city' => $request->city,
+                'province' => $request->province,
+            ]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to update profile.'], 500);
+        }
+        return response()->json(['message' => 'Profile updated successfully.'], 200);
+    }
 
+    public function changePassword(ChangePasswordRequest $request, $id): JsonResponse{
+        $user = User::findOrFail($id);
+        $currentPassword = $user->password;
 
+        if (!Hash::check($request->oldPassword, $currentPassword)) {
+            return response()->json(['error' => 'Current password is incorrect.'], 400);
+        }
+
+        try {
+            $user->update(['password' => Hash::make($request->newPassword)]);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Failed to change password.'], 500);
+        }
+
+        return response()->json(['message' => 'Password changed successfully.'], 200);
+    }
 }
