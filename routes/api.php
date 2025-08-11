@@ -30,7 +30,7 @@ Route::put('/users/{id}', [AuthController::class, 'update'])->middleware('auth:s
 Route::delete('/users/{id}', [AuthController::class, 'destroy'])->middleware('auth:sanctum');
 
 Route::post('/users/change-password/{id}', [ProfileController::class, 'changePassword'])->middleware('auth:sanctum');
-Route::post('/users/profile-update/{id}', [ProfileController::class, 'update'])->middleware('auth:sanctum');
+Route::post('/users/profile-update/{id}', [ProfileController::class, 'uploadProfilePicture'])->middleware('auth:sanctum');
 
 Route::post('chat', [ChatBotController::class, 'chat']);
 

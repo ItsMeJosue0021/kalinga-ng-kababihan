@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\UpdateProfileInfoRequest;
 
@@ -18,48 +19,34 @@ class ProfileController extends Controller
      * Display a listing of the resource.
      */
 
-     public function uploadProfilePicture(Request $request)
-     {
-         $request->validate([
-             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-         ]);
-
-         $user = auth()->user();
-         $profile = Profile::where('user_id', $user->id)->first();
-
-         if ($profile) {
-             // Delete the old profile picture if it exists
-             if ($profile->profile_picture) {
-                 Storage::delete($profile->profile_picture);
-             }
-         } else {
-             // Create a new profile if it doesn't exist
-             $profile = new Profile();
-             $profile->user_id = $user->id;
-         }
-
-         // Store the new profile picture
-         $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-         $profile->profile_picture = $path;
-         $profile->save();
-
-         return response()->json(['message' => 'Profile picture uploaded successfully.']);
-
-         $request->validate([
-            'image' => 'required|image|max:2048', // max 2MB
+    public function uploadProfilePicture($id, Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        if ($request->file('image')) {
-            $path = $request->file('image')->store('uploads', 'public');
+        $user = User::findOrFail($id);
 
+        if ($user) {
+            if ($user->image) {
+                Storage::delete($user->image);
+            }
+            $path = $request->file('image')->store('profile_pictures', 'public');
+            $user->image = $path;
+            $user->save();
+            
             return response()->json([
                 'message' => 'Image uploaded successfully',
                 'path' => $path,
-            ]);
+            ], 200);
+        } else {
+            return response()->json(['error' => 'User not found.'], 404);
         }
-     }
 
-    public function update(UpdateProfileInfoRequest $request, $id): JsonResponse {
+    }
+
+    public function update(UpdateProfileInfoRequest $request, $id): JsonResponse
+    {
         $user = User::findOrFail($id);
         try {
             $user->update([
@@ -80,7 +67,8 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Profile updated successfully.'], 200);
     }
 
-    public function changePassword(ChangePasswordRequest $request, $id): JsonResponse{
+    public function changePassword(ChangePasswordRequest $request, $id): JsonResponse
+    {
         $user = User::findOrFail($id);
         $currentPassword = $user->password;
 
