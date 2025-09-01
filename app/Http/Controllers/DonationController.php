@@ -87,42 +87,42 @@ class DonationController extends Controller
 
         $donation = Donation::create($validated);
 
-        SendDonationEmails::dispatch($donation);
+        // SendDonationEmails::dispatch($donation);
 
-        // // $adminEmail = 'margeiremulta@gmail.com';
+        $adminEmail = 'margeiremulta@gmail.com';
         // $adminEmail = 'joshuasalceda0021@gmail.com';
 
-        // // Format values
-        // $name = $donation->name ?? 'Someone';
-        // $amount = number_format($donation->amount, 2);
+        // Format values
+        $name = $donation->name ?? 'Someone';
+        $amount = number_format($donation->amount, 2);
 
-        // if ($type === 'gcash') {
-        //     // Email to admin
-        //     Mail::raw("$name has donated ₱$amount through GCash.", function ($msg) use ($adminEmail) {
-        //         $msg->to($adminEmail)->subject('New GCash Donation');
-        //     });
+        if ($type === 'gcash') {
+            // Email to admin
+            Mail::raw("$name has donated ₱$amount through GCash.", function ($msg) use ($adminEmail) {
+                $msg->to($adminEmail)->subject('New GCash Donation');
+            });
 
-        //     // Email to donor
-        //     if ($donation->email) {
-        //         Mail::raw("We have received your donation. Thank you and may God bless you.", function ($msg) use ($donation) {
-        //             $msg->to($donation->email)->subject('Donation Received');
-        //         });
-        //     }
+            // Email to donor
+            if ($donation->email) {
+                Mail::raw("We have received your donation. Thank you and may God bless you.", function ($msg) use ($donation) {
+                    $msg->to($donation->email)->subject('Donation Received');
+                });
+            }
 
-        // } elseif ($type === 'cash') {
-        //     // Email to admin
-        //     $address = $donation->address ?? 'office.'; // you can also make this dynamic
-        //     Mail::raw("$name will be donating ₱$amount in cash at your $address.", function ($msg) use ($adminEmail) {
-        //         $msg->to($adminEmail)->subject('Upcoming Cash Donation');
-        //     });
+        } elseif ($type === 'cash') {
+            // Email to admin
+            $address = $donation->address ?? 'office.'; // you can also make this dynamic
+            Mail::raw("$name will be donating ₱$amount in cash at your $address.", function ($msg) use ($adminEmail) {
+                $msg->to($adminEmail)->subject('Upcoming Cash Donation');
+            });
 
-        //     // Email to donor
-        //     if ($donation->email) {
-        //         Mail::raw("Please proceed to the chosen address to hand in your cash donation. Thank you so much.", function ($msg) use ($donation) {
-        //             $msg->to($donation->email)->subject('Donation Instructions');
-        //         });
-        //     }
-        // }
+            // Email to donor
+            if ($donation->email) {
+                Mail::raw("Please proceed to the chosen address to hand in your cash donation. Thank you so much.", function ($msg) use ($donation) {
+                    $msg->to($donation->email)->subject('Donation Instructions');
+                });
+            }
+        }
 
         return response()->json(['message' => 'Donation saved successfully.'], 201);
     }
