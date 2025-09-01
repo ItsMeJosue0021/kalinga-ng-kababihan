@@ -52,7 +52,7 @@ Route::put('/enquiries/{id}', [EnquiryController::class, 'update'])->middleware(
 Route::delete('/enquiries/{id}', [EnquiryController::class, 'destroy'])->middleware(['auth:sanctum', 'role:admin']);  // Delete
 Route::get('/enquiries/search', [EnquiryController::class, 'search'])->middleware(['auth:sanctum', 'role:admin']);
 
-
+Route::get('/projects/search', [ProjectController::class, 'search']);
 Route::apiResource('projects', ProjectController::class);
 Route::post('/projects/update/{id}', [ProjectController::class, 'update']);
 

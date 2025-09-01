@@ -124,4 +124,27 @@ class ProjectController extends Controller
         return response()->json(['message' => 'Project deleted successfully.'], 200);
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->input('search');
+
+        $projects = Project::where('title', 'like', "%$query%")
+            ->orWhere('description', 'like', "%$query%")
+            ->orWhere('location', 'like', "%$query%")
+            ->get()
+            ->map(function ($project) {
+                return [
+                    'id' => $project->id,
+                    'title' => $project->title,
+                    'date' => $project->date,
+                    'location' => $project->location,
+                    'description' => $project->description,
+                    'tags' => $project->tags ? explode(',', $project->tags) : [],
+                    'image' => $project->image,
+                    'is_event' => $project->is_event,
+                ];
+            });
+
+        return response()->json($projects);
+    }
 }
