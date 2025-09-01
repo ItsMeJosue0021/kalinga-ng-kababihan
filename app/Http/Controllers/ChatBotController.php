@@ -33,7 +33,11 @@ class ChatBotController extends Controller
         $conversation = array_merge([["role" => "user", "text" => $knowledgebase]], $chatHistory);
 
         try {
-            $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCGBj3R-CP6PXdeZEP1r117SVO8DgqP6QA", [
+            // $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCGBj3R-CP6PXdeZEP1r117SVO8DgqP6QA", [
+            //     'contents' => array_map(fn($msg) => ['role' => $msg['role'], 'parts' => [['text' => $msg['text']]]], $conversation)
+            // ]);
+
+             $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCoK4Fu1yJpo95HXLsZGSIqXXqSUATV3lk", [
                 'contents' => array_map(fn($msg) => ['role' => $msg['role'], 'parts' => [['text' => $msg['text']]]], $conversation)
             ]);
 
