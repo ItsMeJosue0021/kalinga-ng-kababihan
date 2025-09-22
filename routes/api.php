@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -10,8 +8,11 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ChatBotController;
 use App\Http\Controllers\EnquiryController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AdvocacyController;
 use App\Http\Controllers\DonationController;
@@ -85,5 +86,8 @@ Route::get('/test-email', function () {
 
     return 'Email sent!';
 });
+
+Route::post('/payments/gcash', [PaymentController::class, 'createGCashPayment']);
+
 
 
