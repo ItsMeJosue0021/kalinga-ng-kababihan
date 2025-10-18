@@ -26,7 +26,7 @@ class PaymentWebhookController extends Controller
 
         Log::info("Webhook event: $eventType for payment ID: $paymentId");
 
-        if ($eventType === 'payment.paid') {
+        if ($eventType === 'source.chargeable') {
             $payment = GCashDonation::where('paymongo_id', $paymentId)->first();
 
             if ($payment) {
