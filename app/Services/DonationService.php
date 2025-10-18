@@ -4,10 +4,17 @@ namespace App\Services;
 
 use App\Models\CashDonation;
 use App\Models\GCashDonation;
+use App\Services\PayMongoService;
 use Illuminate\Support\Facades\Mail;
 
 class DonationService
 {
+    protected $paymongo;
+    public function __construct(PayMongoService $paymongo)
+    {
+        $this->paymongo = $paymongo;
+    }
+
     public function processCashDonation(array $data)
     {
         $adminEmail = 'margeiremulta@gmail.com';
@@ -55,7 +62,19 @@ class DonationService
     {
         $adminEmail = 'margeiremulta@gmail.com';
 
-        $donation = GCashDonation::create($data);
+        $payment = $this->paymongo->createGCashSource(
+            $data['amount'],
+            url('http://localhost:5173/donate/success'),
+            url('http://localhost:5173/donate/failed')
+        );
+
+        $donation = GCashDonation::create([
+            'name' => $data['name'] ?? null,
+            'email' => $data['email'] ?? null,
+            'amount' => $data['amount'],
+            'paymongo_id' => $payment['data']['id'],
+            'status' => 'pending',
+        ]);
 
         $name = $donation->name ?? 'Someone';
         $amount = number_format($donation->amount, 2);
@@ -78,7 +97,7 @@ class DonationService
             }
         }
 
-        return $donation;
+        return $payment;
     }
 
     public function confirmCashDonation($id)

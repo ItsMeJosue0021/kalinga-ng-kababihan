@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string("name")->nullable();
             $table->string("email")->nullable();
             $table->string("amount");
+            $table->string("paymongo_id");
+            $table->string("status")->default('pending');
             $table->timestamps();
         });
     }

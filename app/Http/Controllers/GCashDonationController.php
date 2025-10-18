@@ -22,12 +22,10 @@ class GCashDonationController extends Controller
         try {
             $validated = $request->validated();
 
-            $donation = $this->donationService->processGCashDonation($validated);
+            $payment = $this->donationService->processGCashDonation($validated);
 
-            return response()->json([
-                'donation' => $donation,
-                'message' => 'GCash donation recorded successfully',
-            ], 201);
+            return response()->json($payment, 200);
+
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'GCash donation was unsuccessfully. Please try again.',
