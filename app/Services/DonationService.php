@@ -64,8 +64,8 @@ class DonationService
 
         $payment = $this->paymongo->createGCashSource(
             $data['amount'],
-            url('http://localhost:5173/donate/success'),
-            url('http://localhost:5173/donate/failed')
+            url('https://www.kalingangkababaihan.com/donate/success'),
+            url('https://www.kalingangkababaihan.com/donate/failed')
         );
 
         $donation = GCashDonation::create([

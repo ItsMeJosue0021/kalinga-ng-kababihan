@@ -20,6 +20,7 @@ use App\Http\Controllers\CashDonationController;
 use App\Http\Controllers\GCashDonationController;
 use App\Http\Controllers\GoodsDonationController;
 use App\Http\Controllers\KnowledgebaseController;
+use App\Http\Controllers\PaymentWebhookController;
 use App\Http\Controllers\EmergencyContactController;
 
 Route::apiResource('roles', RoleController::class)->middleware('auth:sanctum');
@@ -96,6 +97,8 @@ Route::post('/payments/gcash', [PaymentController::class, 'createGCashPayment'])
 Route::post('/donations/cash/save', [CashDonationController::class, 'store']);
 Route::post('/donations/cash/{id}/confirm', [CashDonationController::class, 'confirmCashDonation']);
 Route::post('/donations/gcash/save', [GCashDonationController::class, 'store']);
+
+Route::post('/donations/gcash/webhook', [PaymentWebhookController::class, 'handle']);
 
 
 
