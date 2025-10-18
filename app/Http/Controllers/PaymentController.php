@@ -22,7 +22,8 @@ class PaymentController extends Controller
 
         $payment = $this->paymongo->createGCashSource(
             $request->amount,
-            url('/payment/success') 
+            url('http://localhost:5173/donate/success'),
+            url('http://localhost:5173/donate/failed')
         );
 
         return response()->json($payment);

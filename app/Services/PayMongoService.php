@@ -13,7 +13,7 @@ class PayMongoService
         $this->secretKey = config('services.paymongo.secret');
     }
 
-    public function createGCashSource($amount, $redirectUrl)
+    public function createGCashSource($amount, $successUrl, $failedUrl)
     {
         $response = Http::withBasicAuth($this->secretKey, '')
             ->post('https://api.paymongo.com/v1/sources', [
@@ -23,8 +23,8 @@ class PayMongoService
                         'currency' => 'PHP',
                         'type' => 'gcash',
                         'redirect' => [
-                            'success' => $redirectUrl,
-                            'failed' => $redirectUrl,
+                            'success' => $successUrl,
+                            'failed' => $failedUrl,
                         ],
                     ],
                 ],

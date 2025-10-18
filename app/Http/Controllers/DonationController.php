@@ -90,7 +90,6 @@ class DonationController extends Controller
         // SendDonationEmails::dispatch($donation);
 
         $adminEmail = 'margeiremulta@gmail.com';
-        // $adminEmail = 'joshuasalceda0021@gmail.com';
 
         // Format values
         $name = $donation->name ?? 'Someone';

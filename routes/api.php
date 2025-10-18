@@ -16,6 +16,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\AdvocacyController;
 use App\Http\Controllers\DonationController;
+use App\Http\Controllers\CashDonationController;
+use App\Http\Controllers\GCashDonationController;
 use App\Http\Controllers\GoodsDonationController;
 use App\Http\Controllers\KnowledgebaseController;
 use App\Http\Controllers\EmergencyContactController;
@@ -87,7 +89,13 @@ Route::get('/test-email', function () {
     return 'Email sent!';
 });
 
+
+
 Route::post('/payments/gcash', [PaymentController::class, 'createGCashPayment']);
+
+Route::post('/donations/cash/save', [CashDonationController::class, 'store']);
+Route::post('/donations/cash/{id}/confirm', [CashDonationController::class, 'confirmCashDonation']);
+Route::post('/donations/gcash/save', [GCashDonationController::class, 'store']);
 
 
 
