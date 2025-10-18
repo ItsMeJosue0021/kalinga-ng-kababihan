@@ -22,19 +22,20 @@ class PaymentWebhookController extends Controller
         }
 
         $eventType = $request->input('data.attributes.type');
-        $paymentId = $request->input('data.attributes.data.id');
-
-        Log::info("Webhook event: $eventType for payment ID: $paymentId");
+        $data = $request->input('data.attributes.data');
 
         if ($eventType === 'source.chargeable') {
-            $payment = GCashDonation::where('paymongo_id', $paymentId)->first();
+
+            $sourceId = $data['id'];
+
+            $payment = GCashDonation::where('paymongo_id', $sourceId)->first();
 
             if ($payment) {
                 $payment->status = 'paid';
                 $payment->save();
                 Log::info("Payment {$payment->id} marked as PAID.");
             } else {
-                Log::warning("Payment not found for ID: $paymentId");
+                Log::warning("Payment not found for ID: $sourceId");
             }
         }
 
