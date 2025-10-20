@@ -97,12 +97,17 @@ Route::get('/gcash-donations/filter', [GCashDonationController::class, 'filter']
 Route::get('/gcash-donations/search', [GCashDonationController::class, 'search']);
 Route::get('/gcash-donations/stats', [GCashDonationController::class, 'stats']);
 Route::get('/gcash-donations/counts', [GCashDonationController::class, 'counts']);
+Route::get('/gcash-donations/print', [GCashDonationController::class, 'gcashDonations']);
 
 Route::get('/cash-donations', [CashDonationController::class, 'index']);
 Route::get('/cash-donations/filter', [CashDonationController::class, 'filter']);
 Route::get('/cash-donations/search', [CashDonationController::class, 'search']);
 Route::get('/cash-donations/stats', [CashDonationController::class, 'stats']);
 Route::get('/cash-donations/counts', [CashDonationController::class, 'counts']);
+Route::put('/cash-donations/{id}/approve', [CashDonationController::class, 'approve']);
+Route::get('/cash-donations/v2/print', [CashDonationController::class, 'cashDonations']);
+Route::put('/cash-donations/v2/{id}/approve', [CashDonationController::class, 'approve']);
+
 
 
 Route::apiResource('goods-donations', GoodsDonationController::class);
@@ -113,6 +118,9 @@ Route::get('/goods-donations/v2/filter', [GoodsDonationController::class, 'filte
 Route::get('/goods-donations/v2/search', [GoodsDonationController::class, 'search']);
 Route::get('/goods-donations/v2/stats', [GoodsDonationController::class, 'stats']);
 Route::get('/goods-donations/v2/counts', [GoodsDonationController::class, 'counts']);
+Route::get('/goods-donations/v2/print', [GoodsDonationController::class, 'goodsDonations']);
+Route::put('/goods-donations/v2/{id}/approve', [GoodsDonationController::class, 'confirm']);
+
 
 
 

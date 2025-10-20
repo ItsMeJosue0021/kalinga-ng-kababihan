@@ -9,6 +9,7 @@ use App\Services\DonationService;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SaveCashDonationRequest;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class CashDonationController extends Controller
 {
@@ -162,5 +163,66 @@ class CashDonationController extends Controller
             'total_approved_amount' => $totalAmount,
         ]);
     }
+
+
+    /**
+     * Approve a specific cash donation by ID.
+     * Example: PUT /api/cash-donations/{id}/approve
+     */
+    public function approve($id)
+    {
+        try {
+            $donation = CashDonation::findOrFail($id);
+
+            if ($donation->status === 'approved') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'This donation is already approved.',
+                ], 400);
+            }
+
+            $donation->update(['status' => 'approved']);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Donation approved successfully.',
+                'data' => $donation,
+            ], 200);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Donation not found.',
+            ], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'An unexpected error occurred while approving donation.',
+            ], 500);
+        }
+    }
+
+    public function cashDonations(Request $request)
+    {
+        $query = CashDonation::query();
+
+        $from = $request->input('dateFrom');
+        $to = $request->input('dateTo');
+
+        if ($from && $to) {
+            $query->whereBetween(DB::raw('DATE(created_at)'), [$from, $to])
+                ->where('status', 'approved');
+        } else {
+            $query->where('status', 'approved');
+        }
+
+        $donations = $query->get();
+
+        return response()->json([
+            'donations' => $donations,
+            'totalAmount' => number_format($donations->sum('amount'), 2, '.', ','),
+            'totalCount' => $donations->count(),
+        ]);
+    }
+
 
 }

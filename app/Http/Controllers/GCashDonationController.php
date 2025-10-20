@@ -153,4 +153,24 @@ class GCashDonationController extends Controller
         ]);
     }
 
+    public function gcashDonations(Request $request)
+    {
+        $query = GCashDonation::query();
+
+        $from = $request->input('dateFrom');
+        $to = $request->input('dateTo');
+
+        if ($from && $to) {
+            $query->whereBetween(DB::raw('DATE(created_at)'), [$from, $to]);
+        }
+
+        $donations = $query->get();
+
+        return response()->json([
+            'donations' => $donations,
+            'totalAmount' => number_format($donations->sum('amount'), 2, '.', ','),
+            'totalCount' => $donations->count(),
+        ]);
+    }
+
 }

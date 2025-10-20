@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Donation;
+use App\Models\CashDonation;
 use Illuminate\Http\Request;
 use App\Models\GoodsDonation;
 use Illuminate\Support\Facades\DB;
@@ -11,14 +12,39 @@ use App\Http\Controllers\Controller;
 
 class ReportController extends Controller
 {
-    public function CashDonations (Request $request) {
-       $query = Donation::query();
+    // public function CashDonations (Request $request) {
+    //    $query = Donation::query();
 
+    //     if ($request->has(['dateFrom', 'dateTo'])) {
+    //         $from = $request->input('dateFrom');
+    //         $to = $request->input('dateTo');
+
+    //         $query->whereBetween(DB::raw('DATE(created_at)'), [$from, $to])->where('status', 'approved');
+    //     }
+
+    //     $donations = $query->get();
+
+    //     return response()->json([
+    //         'donations' => $donations,
+    //         'totalAmount' => number_format($donations->sum('amount'), 2, '.', ','),
+    //         'totalCount' => $donations->count(),
+    //     ]);
+    // }
+
+    public function cashDonations(Request $request)
+    {
+        $query = CashDonation::query();
+
+        // Filter by date range if provided
         if ($request->has(['dateFrom', 'dateTo'])) {
             $from = $request->input('dateFrom');
             $to = $request->input('dateTo');
 
-            $query->whereBetween(DB::raw('DATE(created_at)'), [$from, $to]);
+            $query->whereBetween(DB::raw('DATE(created_at)'), [$from, $to])
+                ->where('status', 'approved');
+        } else {
+            // Default: only approved donations
+            $query->where('status', 'approved');
         }
 
         $donations = $query->get();
@@ -30,6 +56,7 @@ class ReportController extends Controller
         ]);
     }
 
+
     public function GoodsDonations (Request $request) {
        $query = GoodsDonation::query();
 
@@ -37,7 +64,7 @@ class ReportController extends Controller
             $from = $request->input('dateFrom');
             $to = $request->input('dateTo');
 
-            $query->whereBetween(DB::raw('DATE(created_at)'), [$from, $to]);
+            $query->whereBetween(DB::raw('DATE(created_at)'), [$from, $to])->where('status', 'approved');
         }
 
         $donations = $query->latest()->get();
