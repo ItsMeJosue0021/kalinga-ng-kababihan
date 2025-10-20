@@ -20,6 +20,8 @@ return new class extends Migration
             $table->date("drop_off_date");
             $table->time("drop_off_time");
             $table->string("drop_off_address");
+            $table->string("month");
+            $table->string("year");
             $table->string("status")->default("pending");
             $table->timestamps();
         });

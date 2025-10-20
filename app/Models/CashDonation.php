@@ -14,6 +14,8 @@ class CashDonation extends Model
         'drop_off_date',
         'drop_off_time',
         'drop_off_address',
+        'month',
+        'year',
         'status',
     ];
 

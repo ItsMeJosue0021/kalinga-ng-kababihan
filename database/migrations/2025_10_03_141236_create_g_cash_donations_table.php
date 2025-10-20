@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string("email")->nullable();
             $table->string("amount");
             $table->string("paymongo_id");
+            $table->string("month");
+            $table->string("year");
             $table->string("status")->default('pending');
             $table->timestamps();
         });

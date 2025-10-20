@@ -13,6 +13,8 @@ class GCashDonation extends Model
         'amount',
         'paymongo_id',
         'status',
+        'month',
+        'year',
     ];
 
     protected static function boot()
