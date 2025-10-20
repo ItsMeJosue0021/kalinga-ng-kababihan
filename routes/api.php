@@ -72,12 +72,6 @@ Route::get('/dashboard/donations/summary', [DonationController::class, 'getDonat
 Route::get('/reports/cash-donations', [ReportController::class, 'CashDonations']);
 Route::get('/reports/goods-donations', [ReportController::class, 'GoodsDonations']);
 
-
-
-Route::apiResource('goods-donations', GoodsDonationController::class);
-Route::post('/goods-donations/update/{id}', [GoodsDonationController::class, 'update']);
-
-
 Route::post('/send-email', [EmailController::class, 'send']);
 Route::get('/template', [EmailController::class, 'template']);
 
@@ -89,8 +83,6 @@ Route::get('/test-email', function () {
 
     return 'Email sent!';
 });
-
-
 
 Route::post('/payments/gcash', [PaymentController::class, 'createGCashPayment']);
 
@@ -111,6 +103,17 @@ Route::get('/cash-donations/filter', [CashDonationController::class, 'filter']);
 Route::get('/cash-donations/search', [CashDonationController::class, 'search']);
 Route::get('/cash-donations/stats', [CashDonationController::class, 'stats']);
 Route::get('/cash-donations/counts', [CashDonationController::class, 'counts']);
+
+
+Route::apiResource('goods-donations', GoodsDonationController::class);
+Route::post('/goods-donations/update/{id}', [GoodsDonationController::class, 'update']);
+
+Route::get('/goods-donations/v2', [GoodsDonationController::class, 'all']);
+Route::get('/goods-donations/v2/filter', [GoodsDonationController::class, 'filter']);
+Route::get('/goods-donations/v2/search', [GoodsDonationController::class, 'search']);
+Route::get('/goods-donations/v2/stats', [GoodsDonationController::class, 'stats']);
+Route::get('/goods-donations/v2/counts', [GoodsDonationController::class, 'counts']);
+
 
 
 
