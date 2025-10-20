@@ -14,11 +14,12 @@ return new class extends Migration {
             $table->id();
             $table->string('name')->nullable(); // optional
             $table->string('email')->nullable(); // to email donor
-            $table->json('type'); 
+            $table->json('type');
             $table->longText('description');
             $table->string('address');
             $table->year('year');
             $table->string('month'); // as text like "June", "July"
+            $table->string("status")->default("pending");
             $table->timestamps();
         });
     }
