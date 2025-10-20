@@ -100,5 +100,18 @@ Route::post('/donations/gcash/save', [GCashDonationController::class, 'store']);
 
 Route::post('/donations/gcash/webhook', [PaymentWebhookController::class, 'handle']);
 
+Route::get('/gcash-donations', [GCashDonationController::class, 'index']);
+Route::get('/gcash-donations/filter', [GCashDonationController::class, 'filter']);
+Route::get('/gcash-donations/search', [GCashDonationController::class, 'search']);
+Route::get('/gcash-donations/stats', [GCashDonationController::class, 'stats']);
+Route::get('/gcash-donations/counts', [GCashDonationController::class, 'counts']);
+
+Route::get('/cash-donations', [CashDonationController::class, 'index']);
+Route::get('/cash-donations/filter', [CashDonationController::class, 'filter']);
+Route::get('/cash-donations/search', [CashDonationController::class, 'search']);
+Route::get('/cash-donations/stats', [CashDonationController::class, 'stats']);
+Route::get('/cash-donations/counts', [CashDonationController::class, 'counts']);
+
+
 
 

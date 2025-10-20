@@ -18,6 +18,9 @@ class DonationService
     public function processCashDonation(array $data)
     {
         $adminEmail = 'margeiremulta@gmail.com';
+
+        $data['year'] = now()->year;
+        $data['month'] = now()->format('F');
         $donation = CashDonation::create($data);
 
         if ($donation) {
@@ -72,6 +75,8 @@ class DonationService
             'name' => $data['name'] ?? null,
             'email' => $data['email'] ?? null,
             'amount' => $data['amount'],
+            'month' => now()->format('F'),
+            'year' => now()->year,
             'paymongo_id' => $payment['data']['id'],
             'status' => 'pending',
         ]);
