@@ -23,6 +23,13 @@ class PaymentWebhookController extends Controller
         // ✅ Compute the signature using your webhook secret
         $computedSignature = hash_hmac('sha256', $payload, env('PAYMONGO_WEBHOOK_SECRET'));
 
+        Log::debug('Signature Debug', [
+            'header' => $signatureHeader,
+            'received' => $receivedSignature,
+            'computed' => $computedSignature,
+            'secret_used' => env('PAYMONGO_WEBHOOK_SECRET')
+        ]);
+
         // ✅ Validate
         if (!hash_equals($computedSignature, $receivedSignature)) {
             Log::warning('Invalid PayMongo signature.');
@@ -50,29 +57,29 @@ class PaymentWebhookController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-//     public function handle(Request $request)
+    //     public function handle(Request $request)
 //     {
 //         Log::info('PayMongo webhook received', $request->all());
 
-//         $signature = $request->header('Paymongo-Signature');
+    //         $signature = $request->header('Paymongo-Signature');
 //         $payload = $request->getContent();
 //         $computedSignature = hash_hmac('sha256', $payload, env('PAYMONGO_WEBHOOK_SECRET'));
 
-//         if (!hash_equals($signature, $computedSignature)) {
+    //         if (!hash_equals($signature, $computedSignature)) {
 //             Log::warning('Invalid PayMongo signature.');
 //             abort(403, 'Invalid signature');
 //         }
 
-//         $eventType = $request->input('data.attributes.type');
+    //         $eventType = $request->input('data.attributes.type');
 //         $data = $request->input('data.attributes.data');
 
-//         if ($eventType === 'source.chargeable') {
+    //         if ($eventType === 'source.chargeable') {
 
-//             $sourceId = $data['id'];
+    //             $sourceId = $data['id'];
 
-//             $payment = GCashDonation::where('paymongo_id', $sourceId)->first();
+    //             $payment = GCashDonation::where('paymongo_id', $sourceId)->first();
 
-//             if ($payment) {
+    //             if ($payment) {
 //                 $payment->status = 'paid';
 //                 $payment->save();
 //                 Log::info("Payment {$payment->id} marked as PAID.");
@@ -81,6 +88,6 @@ class PaymentWebhookController extends Controller
 //             }
 //         }
 
-//         return response()->json(['status' => 'ok']);
+    //         return response()->json(['status' => 'ok']);
 //     }
 }
