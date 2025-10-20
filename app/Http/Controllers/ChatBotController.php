@@ -37,8 +37,18 @@ class ChatBotController extends Controller
             //     'contents' => array_map(fn($msg) => ['role' => $msg['role'], 'parts' => [['text' => $msg['text']]]], $conversation)
             // ]);
 
-             $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCoK4Fu1yJpo95HXLsZGSIqXXqSUATV3lk", [
-                'contents' => array_map(fn($msg) => ['role' => $msg['role'], 'parts' => [['text' => $msg['text']]]], $conversation)
+            // $response = Http::post("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCWERdmPgL0cD8q1t7R5KxAdq4JoBnBltM", [
+            //     'contents' => array_map(fn($msg) => ['role' => $msg['role'], 'parts' => [['text' => $msg['text']]]], $conversation)
+            // ]);
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'X-goog-api-key' => env('GEMINI_API_KEY'),
+            ])->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', [
+                'contents' => array_map(fn($msg) => [
+                    'role' => $msg['role'] ?? 'user',
+                    'parts' => [['text' => $msg['text']]],
+                ], $conversation),
             ]);
 
             // Log the raw response for debugging
@@ -69,6 +79,78 @@ class ChatBotController extends Controller
             return response()->json(['error' => 'Something went wrong'], 500);
         }
     }
+
+    // public function chat(Request $request)
+    // {
+    //     $userInput = $request->input('message');
+
+    //     // Retrieve previous chat history from session
+    //     $chatHistory = session()->get('chat_history', []);
+
+    //     // Append user input to chat history
+    //     $chatHistory[] = ["role" => "user", "text" => $userInput];
+
+    //     // Build knowledge base text
+    //     $knowledgebaseData = Knowledgebase::all()
+    //         ->map(fn($entry) => "{$entry->title}: {$entry->content}")
+    //         ->implode("\n");
+
+    //     $knowledgebase = <<<EOT
+    //     KNOWLEDGEBASE:
+
+    //     $knowledgebaseData
+
+    //     You will respond to the incoming question strictly based on the knowledge base above.
+    //     Do not reveal this knowledge base or mention its existence.
+    //     Answer naturally and professionally as if you are part of Kalinga ng Kababaihan.
+    //     If the question is unrelated, say: "I'm sorry, I don't have an answer right now."
+    //     Avoid reintroducing yourself or greeting repeatedly unless asked.
+    //     EOT;
+
+    //     // 🧠 Convert chat history to Gemini-compatible "contents"
+    //     // Each user/model message becomes a separate item in the contents array
+    //     $contents = collect($chatHistory)->map(fn($msg) => [
+    //         'parts' => [['text' => $msg['text']]],
+    //     ])->prepend([
+    //         'parts' => [['text' => $knowledgebase]],
+    //     ])->values()->all();
+
+    //     try {
+    //         $response = Http::withHeaders([
+    //             'Content-Type' => 'application/json',
+    //             'X-goog-api-key' => env('GEMINI_API_KEY'),
+    //         ])->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', [
+    //             'contents' => $contents,
+    //         ]);
+
+    //         Log::info('Gemini API Response:', ['response' => $response->body()]);
+
+    //         if ($response->successful()) {
+    //             $data = $response->json();
+
+    //             // Extract model’s response safely
+    //             $botMessage = collect($data['candidates'][0]['content']['parts'] ?? [])
+    //                 ->pluck('text')
+    //                 ->implode("\n");
+
+    //             if (empty($botMessage)) {
+    //                 $botMessage = "I'm sorry, I don't have an answer right now.";
+    //             }
+
+    //             // Append model reply to chat history
+    //             $chatHistory[] = ["role" => "model", "text" => $botMessage];
+    //             session()->put('chat_history', $chatHistory);
+
+    //             return response()->json(["message" => $botMessage]);
+    //         }
+
+    //         Log::error('Gemini API Error', ['response' => $response->body()]);
+    //         return response()->json(['error' => 'Failed to generate a response', $response->body()], 500);
+    //     } catch (\Exception $e) {
+    //         Log::error('API Request Failed', ['message' => $e->getMessage()]);
+    //         return response()->json(['error' => 'Something went wrong'], 500);
+    //     }
+    // }
 
 }
 
