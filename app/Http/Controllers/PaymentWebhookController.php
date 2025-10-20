@@ -17,43 +17,48 @@ class PaymentWebhookController extends Controller
         $payload = $request->getContent();
         $secret = env('PAYMONGO_WEBHOOK_SECRET');
 
-        // Extract the actual signature from the header (after "te=")
-        preg_match('/te=([a-f0-9]+)/', $signatureHeader, $matches);
-        $receivedSignature = $matches[1] ?? null;
+        // Extract timestamp and signature from header
+        preg_match('/t=(\d+),te=([a-f0-9]+)/', $signatureHeader, $matches);
+        $timestamp = $matches[1] ?? null;
+        $receivedSignature = $matches[2] ?? null;
 
-        // Compute our own version
-        $computedSignature = hash_hmac('sha256', $payload, $secret);
+        // Compute HMAC using timestamp + "." + payload
+        $signedPayload = $timestamp . '.' . $payload;
+        $computedSignature = hash_hmac('sha256', $signedPayload, $secret);
 
         Log::debug('Signature Debug', [
             'header' => $signatureHeader,
+            'timestamp' => $timestamp,
             'received' => $receivedSignature,
             'computed' => $computedSignature,
             'secret_used' => $secret,
         ]);
 
-        // Compare safely
         if (!$receivedSignature || !hash_equals($receivedSignature, $computedSignature)) {
             Log::warning('Invalid PayMongo signature.');
             abort(403, 'Invalid signature');
         }
 
+        // Process webhook data
         $eventType = $request->input('data.attributes.type');
         $data = $request->input('data.attributes.data');
 
         if ($eventType === 'source.chargeable') {
             $sourceId = $data['id'];
+
             $payment = GCashDonation::where('paymongo_id', $sourceId)->first();
 
             if ($payment) {
                 $payment->status = 'paid';
                 $payment->save();
-                Log::info("Payment {$payment->id} marked as PAID.");
+                Log::info("✅ Payment {$payment->id} marked as PAID.");
             } else {
-                Log::warning("Payment not found for ID: $sourceId");
+                Log::warning("⚠️ Payment not found for ID: $sourceId");
             }
         }
 
         return response()->json(['status' => 'ok']);
     }
+
 
 }
