@@ -56,14 +56,14 @@ class GCashDonationController extends Controller
         $query = GCashDonation::query();
 
         if ($year) {
-            $query->where('year', $year)->where('status', 'paid');
+            $query->where('year', $year);
         }
 
         if ($month) {
-            $query->where('month', $month)->where('status', 'paid');
+            $query->where('month', $month);
         }
 
-        $donations = $query->orderBy('created_at', 'desc')->get();
+        $donations = $query->orderBy('created_at', 'desc')->where('status', 'paid')->get();
 
         return response()->json($donations);
     }
